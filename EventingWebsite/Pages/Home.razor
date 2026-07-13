@@ -9,7 +9,7 @@
 
         <!-- 1. The looping background video (Leading slash removed for GitHub pages) -->
         <!-- @key ensures Blazor never re-diffs/recreates this element on re-render -->
-        <video @key="\"bg-loop-video\"" class="photo-stage__video" muted loop playsinline @ref="videoRef">
+        <video @key="VideoKey" class="photo-stage__video" muted loop playsinline @ref="videoRef">
                 <source src="images/Home%20Cover/Loop.mp4" type="video/mp4" />
         </video>
 
@@ -57,6 +57,7 @@
 @code {
     private string panelState = "closed";
     private double scrollAccumulator = 0;
+    private const string VideoKey = "bg-loop-video";
 
     private const double MaxAccumulator = 220;
 
