@@ -7,11 +7,16 @@
 
     const tryPlay = async () => {
         if (video.paused) {
+            // 1. Explicitly show the browser the video is muted
+            video.defaultMuted = true;
+            video.muted = true;
+
+            // 2. Explicitly set playsinline (crucial for iOS/Mobile Safari)
+            video.playsInline = true;
+
             try {
                 await video.play();
             } catch (err) {
-                // Ignore the expected 'NotAllowedError' so it stops spamming your console.
-                // We will rely on the user interaction listeners below to fix it.
                 if (err.name !== 'NotAllowedError') {
                     console.warn("Video play issue:", err);
                 }
