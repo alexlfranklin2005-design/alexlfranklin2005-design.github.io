@@ -34,6 +34,14 @@
     z-index: -2; /* Pushes the video to the very back */
 }
 
+.photo-stage__video-fallback {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Keeps the aspect ratio consistent with the video */
+    background-size: cover;
+    background-position: center;
+}
+
 .photo-stage__overlay {
     position: absolute;
     top: 0;
