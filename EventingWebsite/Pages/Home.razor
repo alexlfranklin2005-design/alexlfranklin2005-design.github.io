@@ -1,6 +1,7 @@
 ﻿@page "/"
 @implements IAsyncDisposable
 @inject IJSRuntime JS
+@inject NavigationManager Nav
 
 <div class="stage-container" data-panel-state="@panelState" @ref="stageRef">
 
@@ -69,7 +70,7 @@
         if (!firstRender) return;
 
         _dotNetRef = DotNetObjectReference.Create(this);
-        _module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/scrollHandler.js");
+        _module = await JS.InvokeAsync<IJSObjectReference>("import", $"{Nav.BaseUri}js/scrollHandler.js");
         _handler = await _module.InvokeAsync<IJSObjectReference>("init", _dotNetRef, stageRef, panelRef);
     }
 
