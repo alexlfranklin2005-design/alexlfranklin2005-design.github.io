@@ -70,7 +70,7 @@
         if (!firstRender) return;
 
         _dotNetRef = DotNetObjectReference.Create(this);
-        _module = await JS.InvokeAsync<IJSObjectReference>("import", $"{Nav.BaseUri}js/scrollHandler.js");
+        _module = await JS.InvokeAsync<IJSObjectReference>("import", $"{Nav.BaseUri}js/Scrollhandler.js");
         _handler = await _module.InvokeAsync<IJSObjectReference>("init", _dotNetRef, stageRef, panelRef);
     }
 
