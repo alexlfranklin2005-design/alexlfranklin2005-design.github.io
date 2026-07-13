@@ -27,6 +27,10 @@ jobs:
       - name: Publish app
         run: dotnet publish -c Release -o release
 
+      # THE BULLETPROOF FIX: Forces the file to be created directly in the published folder
+      - name: Bypass Jekyll formatting
+        run: touch release/wwwroot/.nojekyll
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
