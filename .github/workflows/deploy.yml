@@ -20,14 +20,16 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      # Publish without compression to prevent 404s on .br files
+      # Publish to a folder named 'release'
       - name: Publish app
-        run: dotnet publish -c Release -o release --nologo /p:CompressionEnabled=false
+        run: dotnet publish -c Release -o release --nologo
 
-      # Create the .nojekyll file to prevent GitHub from ignoring the _framework folder
+      # The framework files are located in release/wwwroot/_framework
+      # Create .nojekyll in release/wwwroot to stop Jekyll from ignoring the _framework folder
       - name: Add .nojekyll
         run: touch release/wwwroot/.nojekyll
 
+      # Upload the contents of release/wwwroot as the artifact
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
