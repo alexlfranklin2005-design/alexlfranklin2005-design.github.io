@@ -8,8 +8,7 @@
     <section class="photo-stage @(panelState == "open" ? "photo-stage--collapsed" : "")">
 
         <!-- 1. The looping background video (Leading slash removed for GitHub pages) -->
-        <!-- @key ensures Blazor never re-diffs/recreates this element on re-render -->
-        <video class="photo-stage__video" autoplay muted loop playsinline>
+        <video class="photo-stage__video" autoplay muted loop playsinline @ref="videoRef">
                 <source src="images/Home%20Cover/Loop.mp4" type="video/mp4" />
         </video>
 
@@ -57,7 +56,6 @@
 @code {
     private string panelState = "closed";
     private double scrollAccumulator = 0;
-    private const string VideoKey = "bg-loop-video";
 
     private const double MaxAccumulator = 220;
 
@@ -78,9 +76,8 @@
         _module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/Scrollhandler.js");
         _handler = await _module.InvokeAsync<IJSObjectReference>("init", _dotNetRef, stageRef, panelRef);
 
-        // Video is initialized once here and never touched again by Blazor re-renders.
-        // All error/stall handling and autoplay retries happen purely in JS.
-        // Wrapped so a failure here (e.g. missing file) can't break anything else on the page.
+        // Handles the frozen-first-frame Chrome bug and autoplay retries.
+        // Wrapped so a failure here can't break anything else on the page.
         try
         {
             _videoModule = await JS.InvokeAsync<IJSObjectReference>("import", "./js/videoHelpers.js");
@@ -95,9 +92,6 @@
     [JSInvokable]
     public void OnWheelDelta(double deltaY)
     {
-        // Scrollhandler.js only invokes this when native scrolling was blocked:
-        // either the panel isn't open yet, or it's open and already scrolled
-        // to the top of the about content.
         if (deltaY > 0 && panelState != "open")
         {
             scrollAccumulator = MaxAccumulator;
@@ -121,7 +115,6 @@
         scrollAccumulator = 0;
         SetState("closed");
 
-        // Reset the panel's internal scroll position so it's ready for the next time it opens
         if (_handler is not null)
         {
             try { await _handler.InvokeVoidAsync("resetScroll"); } catch { }
