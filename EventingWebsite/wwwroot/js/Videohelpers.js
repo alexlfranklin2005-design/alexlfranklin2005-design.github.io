@@ -1,32 +1,23 @@
-﻿// videoHelpers.js
-// Handles the background loop video entirely outside Blazor's render cycle.
+﻿// Videohelpers.js
+// Safety net for the background loop video - only ever intervenes if the
+// video is NOT already playing. Calling play() unconditionally (even on a
+// video whose native autoplay already succeeded) was what caused the
+// desktop Chrome/Edge frozen-first-frame bug: two competing play requests
+// racing against each other disrupted the compositor. Guarding every call
+// with `if (video.paused)` means JS never touches a video that's already
+// playing, so desktop autoplay is left completely alone, while mobile still
+// gets retried if its first attempt didn't take.
 
 export function initVideo(video) {
     if (!video) return;
 
-    // Chrome/Edge desktop has a known compositor bug: a muted autoplay video
-    // can start actually playing (currentTime advancing) while the painted
-    // frame stays frozen on frame 1, until something forces a full repaint -
-    // which is why switching tabs and back "fixes" it. Nudging the transform
-    // by a sub-pixel amount forces Chrome to recomposite this layer, without
-    // needing the user to do anything.
-    const nudgeRepaint = () => {
-        requestAnimationFrame(() => {
-            video.style.transform = "translateZ(0.01px)";
-            requestAnimationFrame(() => {
-                video.style.transform = "translateZ(0)";
-            });
-        });
-    };
-
     const tryPlay = () => {
-        video.play().catch(err => {
-            console.warn("Video play() was blocked:", err);
-        });
+        if (video.paused) {
+            video.play().catch(err => {
+                console.warn("Video play() was blocked:", err);
+            });
+        }
     };
-
-    // Fires once playback genuinely begins - the right moment to nudge.
-    video.addEventListener("playing", nudgeRepaint);
 
     video.addEventListener("error", () => {
         console.warn("Video failed to load, retrying...");
@@ -35,21 +26,15 @@ export function initVideo(video) {
     });
 
     video.addEventListener("stalled", tryPlay);
-    video.addEventListener("suspend", () => {
-        if (video.paused) tryPlay();
-    });
-
+    video.addEventListener("suspend", tryPlay);
     video.addEventListener("loadedmetadata", tryPlay);
     video.addEventListener("loadeddata", tryPlay);
     video.addEventListener("canplay", tryPlay);
 
     document.addEventListener("visibilitychange", () => {
-        if (!document.hidden && video.paused) tryPlay();
+        if (!document.hidden) tryPlay();
     });
 
+    // Single initial check - does nothing if autoplay already has it playing.
     tryPlay();
-
-    // Also nudge shortly after init in case "playing" already fired before
-    // this listener was attached (can happen if autoplay wins the race).
-    setTimeout(nudgeRepaint, 300);
 }
