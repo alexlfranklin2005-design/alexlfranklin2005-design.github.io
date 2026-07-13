@@ -6,6 +6,15 @@
     padding: 0;
     align-items: center;
 }
+@media (max-width: 768px) {
+    .nav-links {
+        gap: 1rem;
+    }
+
+    ::deep .nav-item {
+        font-size: 0.75rem;
+    }
+}
 
 ::deep .nav-item {
     color: rgba(0, 0, 0, 0.8); /* Dark grey, almost black */
@@ -19,20 +28,3 @@
     ::deep .nav-item:hover, ::deep .nav-item.active {
         color: var(--color-ivy-green); /* Turns ivy green when hovered or clicked */
     }
-
-@media (max-width: 768px) {
-
-    .nav-links {
-        gap: 1.5rem;
-    }
-
-    ::deep .nav-item {
-        font-size: 0.75rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .nav-links {
-        gap: 0.5rem;
-    }
-}

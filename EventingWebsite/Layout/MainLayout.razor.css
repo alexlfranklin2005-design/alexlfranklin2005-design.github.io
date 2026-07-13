@@ -20,27 +20,18 @@
     position: sticky;
     top: 0;
     z-index: 1000;
-    flex-wrap: wrap;
-    row-gap: 0.5rem;
+
 }
 
 @media (max-width: 768px) {
-        /* 1. Ensure the nav menu fills the remaining space */
-        .horizontal-nav {
-            flex-grow: 1;
-            display: flex;
-            justify-content: space-around; /* This distributes space evenly between items */
-        }
-
-            .horizontal-nav a,
-            .horizontal-nav .nav-item {
-                padding: 0 0.8rem;
-                text-align: center;
-                flex: none;
-            }
+    .top-navigation-bar {
+        gap: 1rem; /* Reduce space between logo and menu */
+        padding: 0.5rem; /* Reduce padding on edges */
+        flex-wrap: wrap; /* Allows items to wrap if they get too crowded */
+    }
 
     .logo-img {
-        max-height: 45px;
+        max-height: 45px; /* Slightly smaller logo for mobile */
     }
 }
 
