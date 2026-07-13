@@ -93,19 +93,69 @@
 
 /* Tall / narrow aspect ratio: info on top, map underneath */
 @media (max-width: 900px) {
+    .contact-section,
+    .contact-section * {
+        box-sizing: border-box; /* prevents padding/border from ever pushing width past the screen */
+    }
+
+    .contact-section {
+        padding: 2rem 1rem;
+        width: 100%;
+    }
+
     .contact-grid {
         flex-direction: column-reverse; /* map (first in DOM) ends up on the bottom */
+        gap: 2rem;
+        width: 100%;
     }
 
     .contact-info-container,
     .map-container {
         padding-left: 0;
         width: 100%;
+        min-width: 0; /* lets these shrink below their content's natural width instead of overflowing */
     }
 
         .map-container iframe {
             max-width: 100%;
+            width: 100%;
         }
+
+    .contact-info-container {
+        gap: 1.5rem;
+        align-items: center;
+    }
+
+    /* Icon + label share a centered line; the actual value (phone/email/
+       instagram) wraps onto its own centered line underneath via
+       flex-basis: 100%, without needing any markup changes. */
+    .contact-row {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        row-gap: 0.3rem;
+        column-gap: 0.5rem;
+        width: 100%;
+        font-size: clamp(0.85rem, 4vw, 1.1rem); /* shrinks further on very narrow phones */
+    }
+
+        .contact-row .black-text {
+            flex-basis: 100%; /* forces this onto its own full-width line */
+        }
+
+    .label {
+        min-width: 0;
+        font-size: clamp(0.8rem, 3.5vw, 1rem);
+    }
+
+    .black-text {
+        overflow-wrap: anywhere; /* lets long emails/links break instead of forcing width */
+        word-break: break-word;
+        font-size: clamp(0.8rem, 3.5vw, 1rem);
+    }
 }
 
 /* --- CONTACT PAGE SPECIFIC FIXES --- */
