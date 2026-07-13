@@ -21,8 +21,9 @@
     }
 
 @media (max-width: 768px) {
+
     .nav-links {
-        gap: 1rem;
+        gap: 1.5rem;
     }
 
     ::deep .nav-item {
