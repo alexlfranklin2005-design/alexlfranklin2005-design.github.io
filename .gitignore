@@ -7,6 +7,9 @@ obj/
 
 # Ignore publish output unless you want it committed
 EventingWebsite/release/
+EventingWebsite/published/
+EventingWebsite/bin/
+EventingWebsite/obj/
 
 # Ignore user-specific VS settings
 *.user
@@ -16,3 +19,4 @@ EventingWebsite/release/
 # Ignore temp files
 *.tmp
 *.log
+
