@@ -1,0 +1,237 @@
+﻿@page "/performances"
+@using System.Globalization
+@using System.Text.Json
+@using System.Net.Http.Json
+@using IvyApp.Models
+@inject HttpClient Http
+
+<PageTitle>Performances</PageTitle>
+
+<div class="performances-section fade-in">
+
+    <div class="controls-bar">
+
+        <!-- Sort Popout -->
+        <div class="control-popout">
+            <button class="popout-toggle" @onclick="ToggleSortPanel">
+                Sort
+            </button>
+            @if (showSortPanel)
+            {
+                <div class="popout-panel">
+                    <label class="popout-option">
+                        <input type="radio" name="sort" checked="@(sortOption == "newest")" @onchange='() => SetSort("newest")' />
+                        Newest First
+                    </label>
+                    <label class="popout-option">
+                        <input type="radio" name="sort" checked="@(sortOption == "oldest")" @onchange='() => SetSort("oldest")' />
+                        Oldest First
+                    </label>
+                    <label class="popout-option">
+                        <input type="radio" name="sort" checked="@(sortOption == "position")" @onchange='() => SetSort("position")' />
+                        Best Position
+                    </label>
+                    <label class="popout-option">
+                        <input type="radio" name="sort" checked="@(sortOption == "dressage")" @onchange='() => SetSort("dressage")' />
+                        Lowest Dressage
+                    </label>
+                    <label class="popout-option">
+                        <input type="radio" name="sort" checked="@(sortOption == "total")" @onchange='() => SetSort("total")' />
+                        Lowest Total Points
+                    </label>
+                </div>
+            }
+        </div>
+
+        <!-- Filter Popout -->
+        <div class="control-popout">
+            <button class="popout-toggle" @onclick="ToggleFilterPanel">
+                Filter
+            </button>
+            @if (showFilterPanel)
+            {
+                <div class="popout-panel">
+                    <label class="popout-option popout-option--block">
+                        Horse:
+                        <select class="popout-select" @bind="selectedHorse">
+                            <option value="All Horses">All Horses</option>
+                            @foreach (var horse in HorseNames)
+                            {
+                                <option value="@horse">@horse</option>
+                            }
+                        </select>
+                    </label>
+                    <label class="popout-option">
+                        <input type="checkbox" @bind="sjClearOnly" />
+                        SJ Clear
+                    </label>
+                    <label class="popout-option">
+                        <input type="checkbox" @bind="xcClearOnly" />
+                        XC Clear
+                    </label>
+                </div>
+            }
+        </div>
+
+    </div>
+
+    @if (allResults is null)
+    {
+        <p class="status-text">Loading results...</p>
+    }
+    else if (!DisplayedResults.Any())
+    {
+        <p class="status-text">No results match your filters.</p>
+    }
+    else
+    {
+        <div class="table-wrapper">
+            <table class="performances-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Horse</th>
+                        <th>Event</th>
+                        <th>Class</th>
+                        <th>Pos</th>
+                        <th>D</th>
+                        <th>SJ Total</th>
+                        <th>XC Total</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var result in DisplayedResults)
+                    {
+                        <tr>
+                            <td data-label="Date">@result.Date</td>
+                            <td data-label="Horse"><strong>@result.Horse</strong></td>
+                            <td data-label="Event">@result.Event</td>
+                            <td data-label="Class">@result.Class</td>
+                            <td data-label="Pos">@result.POS</td>
+                            <td data-label="D">@FormatNumber(result.D)</td>
+                            <td data-label="SJ">@FormatNumber(GetSjTotal(result))</td>
+                            <td data-label="XC">@FormatNumber(GetXcTotal(result))</td>
+                            <td data-label="Total">@FormatNumber(result.Total)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@code {
+    private List<EventResult>? allResults;
+
+    private string selectedHorse = "All Horses";
+    private bool sjClearOnly = false;
+    private bool xcClearOnly = false;
+    private string sortOption = "newest";
+
+    private bool showSortPanel = false;
+    private bool showFilterPanel = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // THE WASM FIX: Fetch the JSON file via HTTP request from the wwwroot/Data folder
+            allResults = await Http.GetFromJsonAsync<List<EventResult>>("Data/performances.json", new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            }) ?? new List<EventResult>();
+        }
+        catch
+        {
+            // If the file is missing or fails to load, fall back to an empty list
+            allResults = new List<EventResult>();
+        }
+    }
+
+    private IEnumerable<string> HorseNames =>
+        allResults?.Select(r => r.Horse).Distinct().OrderBy(h => h) ?? Enumerable.Empty<string>();
+
+    private IEnumerable<EventResult> DisplayedResults
+    {
+        get
+        {
+            if (allResults is null)
+            {
+                return Enumerable.Empty<EventResult>();
+            }
+
+            var results = allResults.AsEnumerable();
+
+            if (selectedHorse != "All Horses")
+            {
+                results = results.Where(r => r.Horse == selectedHorse);
+            }
+
+            if (sjClearOnly)
+            {
+                results = results.Where(r => GetSjTotal(r) == 0);
+            }
+
+            if (xcClearOnly)
+            {
+                results = results.Where(r => GetXcTotal(r) == 0);
+            }
+
+            results = sortOption switch
+            {
+                "oldest" => results.OrderBy(ParseDate),
+                "position" => results.OrderBy(r => ParsePosition(r.POS)),
+                "dressage" => results.OrderBy(r => ParseNumber(r.D)),
+                "total" => results.OrderBy(r => ParseNumber(r.Total)),
+                _ => results.OrderByDescending(ParseDate) // "newest" is the default
+            };
+
+            return results;
+        }
+    }
+
+    private void ToggleSortPanel()
+    {
+        showSortPanel = !showSortPanel;
+        showFilterPanel = false;
+    }
+
+    private void ToggleFilterPanel()
+    {
+        showFilterPanel = !showFilterPanel;
+        showSortPanel = false;
+    }
+
+    private void SetSort(string option)
+    {
+        sortOption = option;
+        showSortPanel = false;
+    }
+
+    private static double GetSjTotal(EventResult r) => ParseNumber(r.SJ) + ParseNumber(r.SJT);
+
+    private static double GetXcTotal(EventResult r) => ParseNumber(r.XC) + ParseNumber(r.XCT);
+
+    private static double ParseNumber(string value) =>
+        double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var result) ? result : 0;
+
+    private static int ParsePosition(string value)
+    {
+        // Treat "0" or unparsable positions as unplaced, sending them to the bottom
+        if (!int.TryParse(value, out var pos) || pos == 0)
+        {
+            return int.MaxValue;
+        }
+        return pos;
+    }
+
+    private static DateTime ParseDate(EventResult r) =>
+        DateTime.TryParseExact(r.Date, "d MMM yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date)
+            ? date
+            : DateTime.MinValue;
+
+    private static string FormatNumber(double value) => value.ToString("0.0", CultureInfo.InvariantCulture);
+
+    private static string FormatNumber(string value) => FormatNumber(ParseNumber(value));
+}

@@ -1,0 +1,132 @@
+﻿@page "/"
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+<div class="stage-container" data-panel-state="@panelState" @ref="stageRef">
+
+    <section class="photo-stage @(panelState == "open" ? "photo-stage--collapsed" : "")">
+
+        <!-- 1. The looping background video (Leading slash removed for GitHub pages) -->
+        <video class="photo-stage__video" autoplay loop muted playsinline oncanplay="this.play()">
+            <source src="images/Home Cover/Loop.mp4" type="video/mp4" />
+        </video>
+
+        <!-- 2. The dark green gradient overlay to ensure text readability -->
+        <div class="photo-stage__overlay"></div>
+
+        <h1 class="photo-stage__title">
+            @(panelState == "open" ? "ABOUT ME" : "IVY FISHER EVENTING")
+        </h1>
+
+        @if (panelState != "open")
+        {
+            <button class="reveal-btn reveal-btn--down" @onclick="OpenPanel" aria-label="Show more">
+                <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="18 15 12 9 6 15"></polyline>
+                </svg>
+            </button>
+        }
+    </section>
+
+    <section class="about-panel @panelState" @ref="panelRef">
+        <div class="about-panel__layout">
+            <div class="about-panel__photo">
+                <!-- Headshot image (Leading slash removed for GitHub pages) -->
+                <img src="images/About Headshot/Headshot.jpg" alt="Headshot of Ivy Fisher" />
+            </div>
+            <div class="about-panel__copy">
+                <h3>Where I am Based</h3>
+                <p>Based in the heart of the countryside, our yard is perfectly situated for accessing some of the best training facilities and competition venues in the region.</p>
+
+                <h3>How I Got Into Horse Riding</h3>
+                <p>My passion for equestrian sports began at a very young age, starting out at the local riding school before graduating to a rather cheeky pony club pony.</p>
+
+                <h3>Best Experiences in Eventing So Far</h3>
+                <p>To date, the journey has been filled with incredible highs and invaluable learning curves.</p>
+            </div>
+        </div>
+
+        <footer class="about-panel__footer">
+            <img src="images/Logo/logo_banner.png" alt="Ivy Fisher Eventing Logo" class="about-panel__footer-logo" />
+        </footer>
+    </section>
+</div>
+
+@code {
+    private string panelState = "closed";
+    private double scrollAccumulator = 0;
+
+    private const double MaxAccumulator = 220;
+
+    private ElementReference stageRef;
+    private ElementReference panelRef;
+    private IJSObjectReference? _module;
+    private IJSObjectReference? _handler;
+    private DotNetObjectReference<Home>? _dotNetRef;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        _dotNetRef = DotNetObjectReference.Create(this);
+        _module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/scrollHandler.js");
+        _handler = await _module.InvokeAsync<IJSObjectReference>("init", _dotNetRef, stageRef, panelRef);
+    }
+
+    [JSInvokable]
+    public void OnWheelDelta(double deltaY)
+    {
+        // scrollHandler.js only invokes this when native scrolling was blocked:
+        // either the panel isn't open yet, or it's open and already scrolled
+        // to the top of the about content.
+        if (deltaY > 0 && panelState != "open")
+        {
+            scrollAccumulator = MaxAccumulator;
+            SetState("open");
+        }
+        else if (deltaY < 0 && panelState == "open")
+        {
+            scrollAccumulator = 0;
+            SetState("closed");
+        }
+    }
+
+    private void OpenPanel()
+    {
+        scrollAccumulator = MaxAccumulator;
+        SetState("open");
+    }
+
+    private async Task ClosePanel()
+    {
+        scrollAccumulator = 0;
+        SetState("closed");
+
+        // Reset the panel's internal scroll position so it's ready for the next time it opens
+        if (_handler is not null)
+        {
+            try { await _handler.InvokeVoidAsync("resetScroll"); } catch { }
+        }
+    }
+
+    private void SetState(string newState)
+    {
+        if (newState == panelState) return;
+        panelState = newState;
+        StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_handler is not null)
+        {
+            try { await _handler.InvokeVoidAsync("dispose"); } catch { }
+            await _handler.DisposeAsync();
+        }
+        if (_module is not null)
+        {
+            await _module.DisposeAsync();
+        }
+        _dotNetRef?.Dispose();
+    }
+}

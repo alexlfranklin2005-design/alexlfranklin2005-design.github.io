@@ -1,0 +1,227 @@
+﻿.stage-container {
+    --panel-transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    --panel-peek-offset: 70%;
+    /* The Fix: Force flexbox to lock exactly to the available viewport space */
+    flex-grow: 1;
+    height: 0;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+.photo-stage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    transition: height var(--panel-transition);
+    overflow: hidden; /* Essential: chops off the video neatly when shrinking */
+    z-index: 1; /* Sets a baseline so the video/overlay stay behind the text */
+}
+
+.photo-stage__video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Fills the space without distorting aspect ratio */
+    z-index: -2; /* Pushes the video to the very back */
+}
+
+.photo-stage__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Re-applies your deep green gradient over the moving video */
+    background-image: linear-gradient(var(--color-overlay-dark), var(--color-ivy-overlay));
+    z-index: -1; /* Sandwiched between the video and the text */
+}
+
+.photo-stage--collapsed {
+    height: 20%;
+}
+
+/* --- OPEN STATE: let the banner scroll away with the page --- */
+/* Once the about panel is fully open, both sections drop out of absolute
+   positioning and stack normally. The stage-container becomes the single
+   scroll region, so scrolling moves the banner and the about content
+   together instead of the about-panel scrolling in place under a pinned banner. */
+.stage-container[data-panel-state="open"] {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+    .stage-container[data-panel-state="open"] .photo-stage {
+        position: relative;
+        height: 20vh;
+        flex-shrink: 0;
+    }
+
+    .stage-container[data-panel-state="open"] .about-panel {
+        position: relative;
+        top: auto;
+        bottom: auto;
+        transform: none;
+        height: auto;
+        min-height: 80vh;
+        overflow-y: visible;
+        overscroll-behavior: auto;
+    }
+
+.photo-stage__title {
+    margin: 0;
+    color: white;
+    font-size: 5rem;
+    font-weight: 800;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    transition: font-size 0.6s ease-in-out;
+}
+
+.photo-stage--collapsed .photo-stage__title {
+    font-size: 2.5rem;
+}
+
+.about-panel {
+    position: absolute;
+    top: 20%;
+    bottom: 0; /* Replaces height: 80%. This pins it to the bottom of the container! */
+    width: 100%;
+    box-sizing: border-box;
+    padding: 2rem;
+    background-color: var(--color-bg-light);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    transform: translateY(100%);
+    transition: transform var(--panel-transition);
+    z-index: 10;
+}
+
+    .about-panel.peek {
+        transform: translateY(var(--panel-peek-offset));
+    }
+
+    .about-panel.open {
+        transform: translateY(0);
+    }
+
+.about-panel__layout {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start; /* Keeps it perfectly aligned with the top heading on desktop */
+    gap: 3rem;
+}
+
+.about-panel__photo {
+    flex-shrink: 0;
+    width: 220px;
+}
+
+    .about-panel__photo img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        object-fit: cover;
+    }
+
+/* --- NEW: MOBILE RESPONSIVE LAYOUT --- */
+@media (max-width: 768px) {
+    .about-panel__layout {
+        flex-direction: column; /* Stacks the image above the text */
+        align-items: center; /* Centers the image horizontally */
+        gap: 1.5rem; /* Reduces the gap slightly for mobile */
+    }
+
+    .about-panel__photo {
+        width: 100%; /* Lets the image scale up nicely on phones */
+        max-width: 350px; /* Caps the size so it doesn't get too massive */
+    }
+}
+
+.about-panel__copy {
+    flex-grow: 1;
+}
+
+    .about-panel__copy h3:first-of-type {
+        margin-top: 0;
+    }
+
+    .about-panel__copy h3 {
+        margin-top: 2.5rem;
+        margin-bottom: 0.8rem;
+        color: var(--color-ivy-green);
+        font-weight: 700;
+        font-size: 1.5rem;
+    }
+
+    .about-panel__copy p {
+        line-height: 1.6;
+        color: rgba(0, 0, 0, 0.8);
+    }
+
+.about-panel__footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Pushes the footer further down from the main text */
+    margin-top: 4rem;
+    padding-top: 0;
+    /* Pulls the footer to the far edges, ignoring the parent container's 2rem padding */
+    margin-left: -2rem;
+    margin-right: -2rem;
+    /* Forces the width to span the entire screen */
+    width: calc(100% + 4rem);
+}
+
+.about-panel__footer-logo {
+    width: 100%;
+    height: 70px;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+    .about-panel__footer-logo:hover {
+        opacity: 1;
+    }
+
+.reveal-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.reveal-btn--down {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: bounce-down 2s infinite;
+}
+
+@keyframes bounce-down {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    40% {
+        transform: translateX(-50%) translateY(-15px);
+    }
+
+    60% {
+        transform: translateX(-50%) translateY(-7px);
+    }
+}

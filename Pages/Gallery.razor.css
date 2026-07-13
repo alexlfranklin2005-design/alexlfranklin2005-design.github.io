@@ -1,0 +1,55 @@
+﻿.gallery-container {
+    column-count: 3; /* Adjust based on your preference */
+    column-gap: 1rem;
+    padding: 2rem;
+}
+
+.gallery-item {
+    margin-bottom: 1rem;
+    break-inside: avoid;
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.image-wrapper {
+    position: relative;
+    display: block;
+}
+
+.gallery-item img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s ease;
+}
+
+/* The Green Overlay */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-ivy-green);
+    opacity: 0; /* Hidden by default */
+    transition: opacity 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+}
+
+/* Show overlay on hover */
+.gallery-item:hover .overlay {
+    opacity: 0.85; /* Adjust transparency as needed */
+}
+
+.caption {
+    font-size: 1.2rem;
+    font-weight: 600;
+    pointer-events: none; /* Allows hover to trigger on the wrapper */
+}

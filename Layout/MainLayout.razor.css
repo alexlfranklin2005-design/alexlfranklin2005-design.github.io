@@ -1,0 +1,45 @@
+.page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--color-bg-light);
+}
+
+.top-navigation-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* centers the logo and links together */
+    gap: 3rem;
+    padding: 0.8rem 2rem;
+    background-color: var(--color-bg-light);
+    border-bottom: 1px solid #d2d2d7;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    margin: 0;
+}
+
+.logo-img {
+    max-height: 60px;
+    width: auto;
+    object-fit: contain;
+}
+
+.horizontal-nav {
+    display: flex;
+}
+
+/* flex + min-height: 0 is what lets Home's full-screen photo stage fill
+   all remaining space below the nav; every other page just flows
+   normally inside this and scrolls the whole document as usual. */
+.content-area {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}

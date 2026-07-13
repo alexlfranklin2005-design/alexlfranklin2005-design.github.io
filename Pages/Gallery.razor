@@ -1,0 +1,94 @@
+﻿@page "/gallery"
+
+<PageTitle>Gallery</PageTitle>
+
+<!-- This HTML loops through the photos and creates the layout -->
+<div class="gallery-container">
+    @foreach (var photo in Photos)
+    {
+        <figure class="gallery-item">
+            <div class="image-wrapper">
+                <img src="@photo.Url" alt="@photo.Caption" />
+                <div class="overlay">
+                    <figcaption class="caption">@photo.Caption</figcaption>
+                </div>
+            </div>
+        </figure>
+    }
+</div>
+
+@code {
+    // 1. Declare the list to hold the photos
+    private List<Photo> Photos = new();
+
+    // 2. The logic that processes the static list of images
+    protected override void OnInitialized()
+    {
+        // THE WASM FIX: Since we can't scan the folder at runtime,
+        // we list the filenames here. Just add your image names to this array!
+        var fileNames = new[]
+                {
+            "Aston Advanced 2025.jpg",
+            "Aston.jpg",
+            "Bicton 3 Star L Young Riders 2024.jpg",
+            "Bicton 3 Star L Young Riders 2024_1.jpg",
+            "Bicton 3 Star L Young Riders 2024_2.jpg",
+            "Bicton 3 Star L Young Riders 2024_3.jpg",
+            "Bicton 3 Star L Young Riders 2026.jpg",
+            "Bicton 3 Star L Young Riders 2026_1.jpg",
+            "Bicton 3 Star L Young Riders 2026_2.jpg",
+            "Bicton 3 Star L Young Riders 2026_3.jpg",
+            "Bicton 3 Star L Young Riders 2026_4.jpg",
+            "Bicton 3 Star L Young Riders 2026_5.jpg",
+            "Bicton 3 Star L Young Riders 2026_6.jpg",
+            "Cornbury 3 Star 2023.jpg",
+            "Howden Way Training.jpg",
+            "Howden Way Training_1.jpg",
+            "Howden Way Training_2.jpg",
+            "Kelsall 3 Star 2024.jpg",
+            "Nelly @ Home 2026.jpg",
+            "Nelly @ Home 2026_1.jpg",
+            "Oxtalls 2026.jpg",
+            "South of England 3 Star 2023.jpg",
+            "Thoresby 3 Star 2026.jpg",
+            "Thoresby 3 Star 2026_1.jpg",
+            "Thoresby 3 Star 2026_2.jpg",
+            "Young Rider Europeans 2024.jpg",
+            "Young Rider Europeans 2024_1.jpg",
+            "Young Rider Europeans 2024_2.jpg",
+            "Young Rider Europeans 2024_3.jpg",
+            "Young Rider Europeans 2024_4.jpg",
+            "Young Rider Europeans 2024_5.jpg",
+            "Young Rider Europeans 2024_6.jpg",
+            "Young Rider Europeans 2024_7.jpg"
+        };
+
+        foreach (var fileNameWithExt in fileNames)
+        {
+            // Replaces Path.GetFileNameWithoutExtension cleanly for a string
+            string fileNameWithoutExt = fileNameWithExt.Contains('.')
+                ? fileNameWithExt.Substring(0, fileNameWithExt.LastIndexOf('.'))
+                : fileNameWithExt;
+
+            // YOUR CLEAN FIX: Keep using Regex to remove trailing underscores and numbers
+            string cleanCaption = System.Text.RegularExpressions.Regex.Replace(fileNameWithoutExt, @"_\d+$", "");
+
+            // Replace underscores with spaces to make captions look like readable sentences
+            cleanCaption = cleanCaption.Replace("_", " ");
+
+            // Points directly to the static folder inside wwwroot
+            Photos.Add(new Photo
+            {
+                Url = $"images/Gallery/{fileNameWithExt}",
+                Caption = cleanCaption
+            });
+        }
+    }
+
+    // 3. Define what a Photo is
+    private class Photo
+    {
+        public string Url { get; set; } = string.Empty;
+        public string Caption { get; set; } = string.Empty;
+    }
+}

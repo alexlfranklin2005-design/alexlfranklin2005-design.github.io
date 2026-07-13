@@ -1,0 +1,21 @@
+.nav-links {
+    display: flex;
+    flex-direction: row;
+    gap: 2.5rem; /* Spacing between the links */
+    margin: 0;
+    padding: 0;
+    align-items: center;
+}
+
+::deep .nav-item {
+    color: rgba(0, 0, 0, 0.8); /* Dark grey, almost black */
+    text-decoration: none;
+    font-size: 0.85rem; /* Slightly smaller text */
+    font-weight: 400; /* Thinner, more elegant font weight */
+    letter-spacing: 0.5px;
+    transition: color 0.2s ease-in-out;
+}
+
+    ::deep .nav-item:hover, ::deep .nav-item.active {
+        color: var(--color-ivy-green); /* Turns ivy green when hovered or clicked */
+    }

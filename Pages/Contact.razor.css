@@ -1,0 +1,136 @@
+﻿/* --- HERO BANNER & ANIMATIONS --- */
+.hero-banner {
+    background-image: linear-gradient(var(--color-overlay-dark), var(--color-ivy-overlay)), url('images/hero-bg.png');
+    background-size: cover;
+    background-position: center;
+    height: calc(100vh - 72px);
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    transition: height 0.6s ease-in-out;
+}
+
+    .hero-banner.banner-shrunk {
+        height: 17.5vh;
+    }
+
+.hero-text {
+    color: white;
+    font-size: 5rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin: 0;
+    transition: font-size 0.6s ease-in-out;
+}
+
+.banner-shrunk .hero-text {
+    font-size: 2.5rem;
+}
+
+.contact-section {
+    padding: 4rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+.contact-grid {
+    display: flex;
+    flex-direction: row;
+    align-items: center; /* Centers content vertically relative to the map */
+    gap: 4rem;
+}
+
+/* Wide / laptop aspect ratio: square map on the left */
+.map-container {
+    flex: 0 0 auto;
+}
+
+    .map-container iframe {
+        display: block;
+        width: 100%;
+        max-width: 300px;
+        aspect-ratio: 1 / 1; /* Keeps it a perfect square */
+        height: auto;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin: 0 auto;
+    }
+
+/* Contact Info Styling */
+.contact-info-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    padding-left: 2rem;
+}
+
+.contact-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 1.25rem;
+}
+
+.label {
+    font-weight: 700;
+    color: black;
+    min-width: 150px;
+}
+
+.black-text {
+    color: black;
+    text-decoration: none;
+}
+
+    .black-text:hover {
+        text-decoration: underline;
+    }
+
+/* Tall / narrow aspect ratio: info on top, map underneath */
+@media (max-width: 900px) {
+    .contact-grid {
+        flex-direction: column-reverse; /* map (first in DOM) ends up on the bottom */
+    }
+
+    .contact-info-container,
+    .map-container {
+        padding-left: 0;
+        width: 100%;
+    }
+
+        .map-container iframe {
+            max-width: 100%;
+        }
+}
+
+/* --- CONTACT PAGE SPECIFIC FIXES --- */
+
+.contact-header-bg {
+    background-image: linear-gradient(var(--color-overlay-dark), var(--color-ivy-overlay)), url('/images/Contact Header/contact.jpg');
+}
+
+/* --- IVY LEAF FOOTER ---
+   Lives outside .contact-section so it is naturally full-bleed with
+   no negative-margin math and no bottom margin/padding to fight. */
+.contact-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    line-height: 0; /* kills the inline-image baseline gap under the footer */
+}
+
+.contact-footer-logo {
+    display: block;
+    width: 100%;
+    height: 70px; /* fixed height at every screen size, matching the home page footer's zoom level */
+    object-fit: cover;
+    object-position: center;
+}

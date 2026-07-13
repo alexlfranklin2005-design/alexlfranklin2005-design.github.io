@@ -1,0 +1,212 @@
+﻿.performances-section {
+    padding: 2rem 2rem 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.status-text {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #444;
+    padding: 3rem 0;
+}
+
+/* --- CONTROLS BAR --- */
+.controls-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.control-popout {
+    position: relative;
+}
+
+/* Green pop-out toggle buttons */
+.popout-toggle {
+    background-color: #2f4b3c;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.75rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+    .popout-toggle:hover {
+        background-color: #3d6350;
+    }
+
+    .popout-toggle:active {
+        transform: scale(0.97);
+    }
+
+/* Pop-out panel */
+.popout-panel {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    z-index: 20;
+    background-color: #2f4b3c;
+    color: white;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    min-width: 220px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    animation: popout-fade-in 0.15s ease-out;
+}
+
+@keyframes popout-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.popout-option {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.95rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+    .popout-option input[type="radio"],
+    .popout-option input[type="checkbox"] {
+        accent-color: white;
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+.popout-option--block {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+}
+
+.popout-select {
+    width: 100%;
+    padding: 0.4rem 0.5rem;
+    border-radius: 5px;
+    border: none;
+    font-size: 0.9rem;
+    color: black;
+}
+
+/* --- TABLE --- */
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.performances-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    font-size: 1rem;
+}
+
+    .performances-table thead {
+        background-color: #2f4b3c;
+        color: white;
+    }
+
+    .performances-table th {
+        text-align: left;
+        padding: 1.1rem 1.2rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.9rem;
+        white-space: nowrap;
+    }
+
+    .performances-table td {
+        padding: 1.1rem 1.2rem;
+        border-bottom: 1px solid #eee;
+        color: black;
+    }
+
+    .performances-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .performances-table tbody tr:hover {
+        background-color: #f5f8f6;
+    }
+
+    .performances-table td strong {
+        font-weight: 700;
+    }
+
+/* --- RESPONSIVE: STACKED CARDS ON NARROW SCREENS --- */
+@media (max-width: 800px) {
+    .controls-bar {
+        flex-wrap: wrap;
+    }
+
+    .table-wrapper {
+        overflow-x: visible;
+        box-shadow: none;
+    }
+
+    .performances-table thead {
+        display: none;
+    }
+
+    .performances-table,
+    .performances-table tbody,
+    .performances-table tr,
+    .performances-table td {
+        display: block;
+        width: 100%;
+    }
+
+        .performances-table tr {
+            margin-bottom: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+            background-color: white;
+        }
+
+        .performances-table td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: right;
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+            .performances-table td:last-child {
+                border-bottom: none;
+            }
+
+            .performances-table td::before {
+                content: attr(data-label);
+                font-weight: 700;
+                text-transform: uppercase;
+                font-size: 0.8rem;
+                color: #2f4b3c;
+                text-align: left;
+            }
+}
