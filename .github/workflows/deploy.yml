@@ -22,12 +22,13 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Publish Blazor project
-        run: dotnet publish -c Release -o published
+        run: dotnet publish EventingWebsite/EventingWebsite.csproj -c Release -o published
 
       - name: Upload artifact for GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: published/wwwroot
+          # Note the updated path to reflect the 'published' folder location
+          path: EventingWebsite/published/wwwroot
 
   deploy:
     needs: build
