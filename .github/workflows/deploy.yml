@@ -28,7 +28,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # Note the updated path to reflect the 'published' folder location
-          path: EventingWebsite/published/wwwroot
+          path: published/wwwroot
 
   deploy:
     needs: build
