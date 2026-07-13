@@ -26,13 +26,21 @@
 
 @media (max-width: 768px) {
     .top-navigation-bar {
-        gap: 1rem; /* Reduce space between logo and menu */
-        padding: 0.5rem; /* Reduce padding on edges */
-        flex-wrap: wrap; /* Allows items to wrap if they get too crowded */
+        /* Switch from center to space-between to push them to the sides */
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem; /* Added slightly more side padding */
+        flex-wrap: nowrap; /* Prevent wrapping so they stay side-by-side */
+    }
+
+    .horizontal-nav {
+        /* This ensures the menu doesn't get crushed */
+        flex-grow: 1;
+        justify-content: flex-end; /* Keeps the links to the right side */
     }
 
     .logo-img {
-        max-height: 45px; /* Slightly smaller logo for mobile */
+        max-height: 45px;
     }
 }
 
