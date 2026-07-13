@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include=".github\workflows\deploy.yml" />
+    <Content Include=".github\workflows\Deploy.yml" />
   </ItemGroup>
 
   <ItemGroup>

@@ -21,7 +21,7 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Publish app
-        run: dotnet publish -c Release -o release --nologo /p:CompressionEnabled=false /p:PathBase=/EventingWebsite/
+        run: dotnet publish -c Release -o release --nologo /p:CompressionEnabled=false
 
       - name: Add .nojekyll
         run: touch release/wwwroot/.nojekyll
