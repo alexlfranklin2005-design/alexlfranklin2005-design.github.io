@@ -8,9 +8,9 @@
     <section class="photo-stage @(panelState == "open" ? "photo-stage--collapsed" : "")">
 
         <!-- 1. The looping background video (Leading slash removed for GitHub pages) -->
-        <video class="photo-stage__video" autoplay loop muted playsinline 
-                    @onerror="HandleVideoError">
-                <source src="images/Home Cover/Loop.mp4" type="video/mp4" />
+        <!-- @key ensures Blazor never re-diffs/recreates this element on re-render -->
+        <video @key="\"bg-loop-video\"" class="photo-stage__video" muted loop playsinline @ref="videoRef">
+                <source src="images/Home%20Cover/Loop.mp4" type="video/mp4" />
         </video>
 
         <!-- 2. The dark green gradient overlay to ensure text readability -->
@@ -62,8 +62,11 @@
 
     private ElementReference stageRef;
     private ElementReference panelRef;
+    private ElementReference videoRef;
+
     private IJSObjectReference? _module;
     private IJSObjectReference? _handler;
+    private IJSObjectReference? _videoModule;
     private DotNetObjectReference<Home>? _dotNetRef;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -73,6 +76,11 @@
         _dotNetRef = DotNetObjectReference.Create(this);
         _module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/Scrollhandler.js");
         _handler = await _module.InvokeAsync<IJSObjectReference>("init", _dotNetRef, stageRef, panelRef);
+
+        // Video is initialized once here and never touched again by Blazor re-renders.
+        // All error/stall handling and autoplay retries happen purely in JS.
+        _videoModule = await JS.InvokeAsync<IJSObjectReference>("import", "./js/videoHelpers.js");
+        await _videoModule.InvokeVoidAsync("initVideo", videoRef);
     }
 
     [JSInvokable]
@@ -129,12 +137,10 @@
         {
             await _module.DisposeAsync();
         }
+        if (_videoModule is not null)
+        {
+            await _videoModule.DisposeAsync();
+        }
         _dotNetRef?.Dispose();
-    }
-
-    // Triggered if the video fails to load or play
-    private void HandleVideoError()
-    {
-        StateHasChanged();
     }
 }
