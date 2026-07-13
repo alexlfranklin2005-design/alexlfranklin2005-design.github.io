@@ -11,24 +11,21 @@ permissions:
 
 jobs:
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
+      # Publish without compression to prevent 404s on .br files
       - name: Publish app
-        run: dotnet publish -c Release -o release
+        run: dotnet publish -c Release -o release --nologo /p:CompressionEnabled=false
 
-      # THE BULLETPROOF FIX: Forces the file to be created directly in the published folder
-      - name: Bypass Jekyll formatting
+      # Create the .nojekyll file to prevent GitHub from ignoring the _framework folder
+      - name: Add .nojekyll
         run: touch release/wwwroot/.nojekyll
 
       - name: Upload artifact
@@ -37,5 +34,4 @@ jobs:
           path: 'release/wwwroot'
 
       - name: Deploy to GitHub Pages
-        id: deployment
         uses: actions/deploy-pages@v4
