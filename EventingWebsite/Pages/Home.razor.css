@@ -87,7 +87,7 @@
 .photo-stage__title {
     margin: 0;
     color: white;
-    font-size: clamp(4rem, 6vw, 5rem);
+    font-size: clamp(3.5rem, 6vw, 5rem);
     font-weight: 800;
     line-height: 1;
     text-transform: uppercase;
