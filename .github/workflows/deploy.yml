@@ -1,8 +1,8 @@
-﻿name: Deploy Blazor to GitHub Pages
+﻿name: Deploy Blazor WASM to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
 
 permissions:
   contents: read
@@ -10,26 +10,28 @@ permissions:
   id-token: write
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: 8.0.x
 
-      - name: Publish app
-        run: dotnet publish -c Release -o release --nologo /p:CompressionEnabled=false
+      - name: Publish Blazor project
+        run: dotnet publish -c Release -o published
 
-      - name: Add .nojekyll
-        run: touch release/wwwroot/.nojekyll
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Upload artifact for GitHub Pages
+        uses: actions/upload-pages-artifact@v2
         with:
-          path: 'release/wwwroot'
+          path: published/wwwroot
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v2
