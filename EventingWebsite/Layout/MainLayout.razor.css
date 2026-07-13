@@ -3,6 +3,10 @@
     flex-direction: column;
     min-height: 100vh;
     background-color: var(--color-bg-light);
+    /* New constraints to prevent mobile overflow */
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
 }
 
 .top-navigation-bar {
@@ -16,6 +20,18 @@
     position: sticky;
     top: 0;
     z-index: 1000;
+}
+
+@media (max-width: 768px) {
+    .top-navigation-bar {
+        gap: 1rem; /* Reduce space between logo and menu */
+        padding: 0.5rem; /* Reduce padding on edges */
+        flex-wrap: wrap; /* Allows items to wrap if they get too crowded */
+    }
+
+    .logo-img {
+        max-height: 45px; /* Slightly smaller logo for mobile */
+    }
 }
 
 .logo {
