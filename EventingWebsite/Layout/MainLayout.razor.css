@@ -25,22 +25,20 @@
 }
 
 @media (max-width: 768px) {
-    @media (max-width: 768px) {
-        /* 1. Ensure the nav menu fills the remaining space */
-        .horizontal-nav {
-            flex-grow: 1;
-            display: flex;
-            justify-content: space-around; /* This distributes space evenly between items */
-        }
-
-            /* 2. Target the actual links/items inside your NavMenu */
-            .horizontal-nav a,
-            .horizontal-nav .nav-item {
-                padding: 0 0.5rem; /* Adds breathing room around each word */
-                text-align: center;
-                flex: 1; /* Forces each link to share the available horizontal space equally */
-            }
+    .horizontal-nav {
+        display: flex;
+        flex-grow: 1;
+        justify-content: space-between;
+        width: 100%;
     }
+
+        .horizontal-nav a,
+        .horizontal-nav .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 0.75rem 0;
+            font-size: 1.1rem;
+        }
 
     .logo-img {
         max-height: 45px;
