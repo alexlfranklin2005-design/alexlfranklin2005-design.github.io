@@ -132,12 +132,9 @@
         _dotNetRef?.Dispose();
     }
 
-    private bool videoFailed = false;
-
     // Triggered if the video fails to load or play
     private void HandleVideoError()
     {
-        videoFailed = true;
         StateHasChanged();
     }
 }
