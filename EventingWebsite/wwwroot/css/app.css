@@ -133,7 +133,8 @@ h1:focus {
     width: 55px;
     height: 55px;
     border: 6px solid #ddd;
-    border-top: 6px solid #000;
+    /* Replace #000 with your green variable or hex code */
+    border-top: 6px solid var(--color-ivy-green);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
 }
