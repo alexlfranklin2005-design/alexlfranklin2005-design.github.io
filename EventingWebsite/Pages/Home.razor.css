@@ -34,6 +34,12 @@
     object-fit: cover; /* Fills the space without distorting aspect ratio */
     object-position: center;
     z-index: -2; /* Pushes the video to the very back */
+    /* Forces Chrome/Edge to promote this to its own GPU-composited layer and
+       start painting it immediately, instead of leaving it frozen on frame 1
+       until an unrelated repaint (like a tab switch) forces one. */
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 .photo-stage__video-fallback {
