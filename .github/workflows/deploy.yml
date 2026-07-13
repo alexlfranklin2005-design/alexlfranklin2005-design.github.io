@@ -25,9 +25,6 @@ jobs:
 
       - name: Add .nojekyll
         run: touch release/wwwroot/.nojekyll
-        
-      - name: Add CNAME
-        run: echo "alexlfranklin2005-design.github.io" > release/wwwroot/CNAME
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
