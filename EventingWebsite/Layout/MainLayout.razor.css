@@ -25,18 +25,21 @@
 }
 
 @media (max-width: 768px) {
-    .top-navigation-bar {
-        /* Switch from center to space-between to push them to the sides */
-        justify-content: space-between;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem; /* Added slightly more side padding */
-        flex-wrap: nowrap; /* Prevent wrapping so they stay side-by-side */
-    }
+    @media (max-width: 768px) {
+        /* 1. Ensure the nav menu fills the remaining space */
+        .horizontal-nav {
+            flex-grow: 1;
+            display: flex;
+            justify-content: space-around; /* This distributes space evenly between items */
+        }
 
-    .horizontal-nav {
-        /* This ensures the menu doesn't get crushed */
-        flex-grow: 1;
-        justify-content: flex-end; /* Keeps the links to the right side */
+            /* 2. Target the actual links/items inside your NavMenu */
+            .horizontal-nav a,
+            .horizontal-nav .nav-item {
+                padding: 0 0.5rem; /* Adds breathing room around each word */
+                text-align: center;
+                flex: 1; /* Forces each link to share the available horizontal space equally */
+            }
     }
 
     .logo-img {
