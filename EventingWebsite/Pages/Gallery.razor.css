@@ -47,9 +47,9 @@
 .gallery-item:hover .overlay {
     opacity: 0.85; /* Adjust transparency as needed */
 }
-
 .caption {
-    font-size: 1.2rem;
+    font-size: clamp(0.65rem, 2vw, 1.2rem);
     font-weight: 600;
-    pointer-events: none; /* Allows hover to trigger on the wrapper */
+    line-height: 1.2;
+    pointer-events: none;
 }
