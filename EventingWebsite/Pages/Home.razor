@@ -70,14 +70,14 @@
         if (!firstRender) return;
 
         _dotNetRef = DotNetObjectReference.Create(this);
-        _module = await JS.InvokeAsync<IJSObjectReference>("import", $"{Nav.BaseUri}js/Scrollhandler.js");
+        _module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/Scrollhandler.js");
         _handler = await _module.InvokeAsync<IJSObjectReference>("init", _dotNetRef, stageRef, panelRef);
     }
 
     [JSInvokable]
     public void OnWheelDelta(double deltaY)
     {
-        // scrollHandler.js only invokes this when native scrolling was blocked:
+        // Scrollhandler.js only invokes this when native scrolling was blocked:
         // either the panel isn't open yet, or it's open and already scrolled
         // to the top of the about content.
         if (deltaY > 0 && panelState != "open")
