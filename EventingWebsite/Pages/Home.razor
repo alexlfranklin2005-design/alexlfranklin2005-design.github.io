@@ -8,20 +8,13 @@
     <section class="photo-stage @(panelState == "open" ? "photo-stage--collapsed" : "")">
 
         <!-- 1. The looping background video (Leading slash removed for GitHub pages) -->
-        @if (!videoFailed)
-        {
+
             <video class="photo-stage__video" autoplay loop muted playsinline 
                     @onerror="HandleVideoError">
                 <source src="images/Home Cover/Loop.mp4" type="video/mp4" />
             </video>
-        }
-        else
-        {
-            <!-- 2. Fallback Image -->
-            <div class="photo-stage__video-fallback" 
-                    style="background-image: url('images/Home Cover/fallback.jpg');">
-            </div>
-        }
+
+
 
         <!-- 2. The dark green gradient overlay to ensure text readability -->
         <div class="photo-stage__overlay"></div>
@@ -142,12 +135,5 @@
         _dotNetRef?.Dispose();
     }
 
-    private bool videoFailed = false;
 
-    // Triggered if the video fails to load or play
-    private void HandleVideoError()
-    {
-        videoFailed = true;
-        StateHasChanged();
-    }
 }
