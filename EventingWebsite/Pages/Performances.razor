@@ -170,12 +170,12 @@
 
             if (sjClearOnly)
             {
-                results = results.Where(r => r.SJ == 0);
+                results = results.Where(r => r.SJ == "0.0");
             }
 
             if (xcClearOnly)
             {
-                results = results.Where(r => r.XC == 0);
+                results = results.Where(r => r.XC == "0.0");
             }
 
             results = sortOption switch
