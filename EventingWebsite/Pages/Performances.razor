@@ -95,8 +95,8 @@
                         <th>Class</th>
                         <th>Pos</th>
                         <th>D</th>
-                        <th>SJ Total</th>
-                        <th>XC Total</th>
+                        <th>SJ</th>
+                        <th>XC</th>
                         <th>Total</th>
                     </tr>
                 </thead>
@@ -110,8 +110,8 @@
                             <td data-label="Class">@result.Class</td>
                             <td data-label="Pos">@result.POS</td>
                             <td data-label="D">@FormatNumber(result.D)</td>
-                            <td data-label="SJ">@FormatNumber(GetSjTotal(result))</td>
-                            <td data-label="XC">@FormatNumber(GetXcTotal(result))</td>
+                            <td data-label="SJ">@FormatNumber(result.SJ)</td>
+                            <td data-label="XC">@FormatNumber(result.XC)</td>
                             <td data-label="Total">@FormatNumber(result.Total)</td>
                         </tr>
                     }
@@ -208,10 +208,6 @@
         sortOption = option;
         showSortPanel = false;
     }
-
-    private static double GetSjTotal(EventResult r) => ParseNumber(r.SJ) + ParseNumber(r.SJT);
-
-    private static double GetXcTotal(EventResult r) => ParseNumber(r.XC) + ParseNumber(r.XCT);
 
     private static double ParseNumber(string value) =>
         double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var result) ? result : 0;
