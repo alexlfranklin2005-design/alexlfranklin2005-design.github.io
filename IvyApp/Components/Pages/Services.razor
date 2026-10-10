@@ -1,0 +1,45 @@
+﻿@page "/services"
+@rendermode InteractiveServer
+@inject NavigationManager Nav
+
+<PageTitle>Services - Ivy Fisher Eventing</PageTitle>
+
+<div class="services-page">
+    <div class="services-header">
+        <h1 class="services-heading">Our Services</h1>
+        <p class="services-subheading">Professional event horse production, expert coaching, and tailored ownership opportunities.</p>
+    </div>
+
+    <div class="services-grid">
+        @foreach (var service in services)
+        {
+            <div class="service-card" @onclick="() => Nav.NavigateTo(service.Route)">
+                <img class="service-img" src="@service.ImagePath" alt="@service.Title" loading="lazy" />
+                <div class="service-overlay"></div>
+                <div class="service-content">
+                    <h3 class="service-title">@service.Title</h3>
+                    <span class="service-action">
+                        Explore
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<SiteFooter />
+
+@code {
+    private record ServiceLink(string Route, string ImagePath, string Title);
+
+    private List<ServiceLink> services = new()
+    {
+        new ServiceLink("/livery", "/images/Services/Livery.jpeg", "Competition Livery"),
+        new ServiceLink("/lessons", "/images/Services/Lessons.jpeg", "Lessons & Training"),
+        new ServiceLink("/sales", "/images/Services/Ownership.jpeg", "Horse Sales & Ownership"),
+    };
+}

@@ -10,7 +10,6 @@
 <div class="performances-section fade-in">
 
     <div class="controls-bar">
-
         <!-- Sort Popout -->
         <div class="control-popout">
             <button class="popout-toggle" @onclick="ToggleSortPanel">
@@ -73,6 +72,15 @@
             }
         </div>
 
+        <!-- Search Bar -->
+        <div class="control-search">
+            <input type="text"
+                   class="search-input"
+                   placeholder="Search events..."
+                   @bind="searchQuery"
+                   @bind:event="oninput" />
+        </div>
+
     </div>
 
     @if (allResults is null)
@@ -122,9 +130,12 @@
 
 </div>
 
+<SiteFooter />
+
 @code {
     private List<EventResult>? allResults;
 
+    private string searchQuery = string.Empty;
     private string selectedHorse = "All Horses";
     private bool sjClearOnly = false;
     private bool xcClearOnly = false;
@@ -165,28 +176,38 @@
 
             var results = allResults.AsEnumerable();
 
+            // Filter by Search Query (Event name)
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                results = results.Where(r => r.Event != null && r.Event.Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
+            }
+
+            // Filter by Horse
             if (selectedHorse != "All Horses")
             {
                 results = results.Where(r => r.Horse == selectedHorse);
             }
 
+            // Filter by SJ Clear
             if (sjClearOnly)
             {
                 results = results.Where(r => GetSjTotal(r) == 0);
             }
 
+            // Filter by XC Clear
             if (xcClearOnly)
             {
                 results = results.Where(r => GetXcTotal(r) == 0);
             }
 
+            // Apply Sorting
             results = sortOption switch
             {
                 "oldest" => results.OrderBy(ParseDate),
                 "position" => results.OrderBy(r => ParsePosition(r.POS)),
                 "dressage" => results.OrderBy(r => ParseNumber(r.D)),
                 "total" => results.OrderBy(r => ParseNumber(r.Total)),
-                _ => results.OrderByDescending(ParseDate) // "newest" is the default
+                _ => results.OrderByDescending(ParseDate) // "newest" default
             };
 
             return results;
@@ -220,7 +241,6 @@
 
     private static int ParsePosition(string value)
     {
-        // Treat "0" or unparsable positions as unplaced, sending them to the bottom
         if (!int.TryParse(value, out var pos) || pos == 0)
         {
             return int.MaxValue;

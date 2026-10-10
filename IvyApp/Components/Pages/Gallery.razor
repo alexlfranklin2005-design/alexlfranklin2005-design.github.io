@@ -4,34 +4,43 @@
 
 <PageTitle>Gallery</PageTitle>
 
-<!-- This HTML loops through the photos and creates the layout -->
-<div class="gallery-container">
-    @foreach (var photo in Photos)
-    {
-        <figure class="gallery-item">
-            <div class="image-wrapper">
-                <img src="@photo.Url" alt="@photo.Caption" />
-                <div class="overlay">
-                    <figcaption class="caption">@photo.Caption</figcaption>
+@if (photos == null)
+{
+    <LoadingSpinner Message="Loading Gallery..." />
+}
+else
+{
+    <div class="gallery-container">
+        @foreach (var photo in photos)
+        {
+            <figure class="gallery-item">
+                <div class="image-wrapper">
+                    <img src="@photo.Url" alt="@photo.Caption" loading="lazy" />
+                    <div class="overlay">
+                        <figcaption class="caption">@photo.Caption</figcaption>
+                    </div>
                 </div>
-            </div>
-        </figure>
-    }
-</div>
+            </figure>
+        }
+    </div>
+}
+
+<SiteFooter />
 
 @code {
-    // 1. Declare the list to hold the photos
-    private List<Photo> Photos = new();
+    private List<Photo>? photos;
 
-    // 2. The logic that actually looks inside your folders
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        // UPDATED: Now looks directly inside wwwroot/images/Gallery
+        // 1. Yield execution immediately so the loading spinner renders instantly on click
+        await Task.Yield();
+
+        var loadedPhotos = new List<Photo>();
         string path = Path.Combine(Env.WebRootPath, "images", "Gallery");
 
         if (Directory.Exists(path))
         {
-            // Case-insensitive search for extensions to catch .PNG, .png, .JPG, and .jpg
+            // Case-insensitive search for extensions
             var files = Directory.GetFiles(path, "*.*")
                 .Where(f => f.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
                             f.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase));
@@ -41,21 +50,21 @@
                 string fileNameWithoutExt = Path.GetFileNameWithoutExtension(file);
                 string fileNameWithExt = Path.GetFileName(file);
 
-                // THE FIX: Use Regex to remove trailing underscores and numbers (e.g., "_1", "_42")
-                // The pattern @"_\d+$" looks for an underscore followed by one or more digits at the end of the string.
+                // Remove trailing underscores and numbers (e.g., "_1", "_42")
                 string cleanCaption = System.Text.RegularExpressions.Regex.Replace(fileNameWithoutExt, @"_\d+$", "");
 
-                // UPDATED: The URL points to /images/Gallery/ and uses the cleaned filename as the caption
-                Photos.Add(new Photo
+                loadedPhotos.Add(new Photo
                 {
                     Url = $"/images/Gallery/{fileNameWithExt}",
                     Caption = cleanCaption
                 });
             }
         }
+
+        // 2. Assign the loaded list to trigger the UI update
+        photos = loadedPhotos;
     }
 
-    // 3. Define what a Photo is (assuming this is your class structure)
     private class Photo
     {
         public string Url { get; set; } = string.Empty;

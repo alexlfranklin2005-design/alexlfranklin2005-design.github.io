@@ -1,0 +1,11 @@
+<div class="loading-spinner" role="status" aria-live="polite">
+    <div class="loading-spinner__ring"></div>
+    @if (!string.IsNullOrWhiteSpace(Message))
+    {
+        <p class="loading-spinner__text">@Message</p>
+    }
+</div>
+
+@code {
+    [Parameter] public string Message { get; set; } = "Loading...";
+}

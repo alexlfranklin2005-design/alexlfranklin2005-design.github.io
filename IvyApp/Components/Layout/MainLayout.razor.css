@@ -11,11 +11,12 @@
     justify-content: center; /* centers the logo and links together */
     gap: 3rem;
     padding: 0.8rem 2rem;
-    background-color: var(--color-bg-light);
-    border-bottom: 1px solid #d2d2d7;
+    background-color: var(--color-bg-medium);
+    border-bottom: 2px solid var(--color-accent-green);
     position: sticky;
     top: 0;
     z-index: 1000;
+    pointer-events: auto;
 }
 
 .logo {
@@ -32,9 +33,14 @@
 
 .horizontal-nav {
     display: flex;
+    z-index: 1001;
 }
 
-/* flex + min-height: 0 is what lets Home's full-screen photo stage fill
+/* The footer lives in MainLayout, after .content-area. .page-container is at
+   least one screen tall and .content-area grows to fill what's left, so on
+   short pages the footer sits at the bottom of the window.
+
+   flex + min-height: 0 is what lets Home's full-screen photo stage fill
    all remaining space below the nav; every other page just flows
    normally inside this and scrolls the whole document as usual. */
 .content-area {
@@ -42,4 +48,37 @@
     display: flex;
     flex-direction: column;
     min-height: 0;
+}
+
+/* --- Page loading overlay ---
+   Covers the page (but not the sticky header) until the page and its images
+   are ready. pointer-events: none means it can never block a click. */
+.page-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 999; /* just under the header (1000) */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-bg-light);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.25s ease, visibility 0s linear 0.25s;
+}
+
+/* Fades in after a short delay so very quick navigations never flash a spinner */
+html.is-page-loading .page-loader {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.2s ease 0.15s, visibility 0s linear 0.15s;
+    /* Failsafe: if scripts never clear the loading state, give up after 12s */
+    animation: page-loader-failsafe 0.01s linear 12s forwards;
+}
+
+@keyframes page-loader-failsafe {
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
 }

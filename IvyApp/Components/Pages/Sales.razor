@@ -1,0 +1,112 @@
+﻿@page "/sales"
+@rendermode InteractiveServer
+@using System.Text.Json
+@inject IWebHostEnvironment Env
+
+<PageTitle>Horse Sales &amp; Ownership - Ivy Fisher Eventing</PageTitle>
+
+<main class="livery-content">
+    <!-- Centered Header -->
+    <div class="livery-header">
+        <h1 class="livery-title">HORSE SALES &amp; OWNERSHIP</h1>
+        <p class="livery-subheading">Sourcing, producing, and matching top-quality event horses with ambitious riders &amp; owners</p>
+    </div>
+
+    <!-- Intro Section: Photo Left, Description Right -->
+    <section class="livery-intro">
+        <div class="livery-intro__photo-wrapper">
+            <img class="livery-intro__photo" src="/images/Services/Ownership.jpeg" alt="Ivy Fisher Horse Sales" loading="lazy" />
+        </div>
+        <div class="livery-intro__copy">
+            <span class="livery-badge">Elite Event Prospects</span>
+            <h2 class="livery-heading">Carefully Produced Event Horses</h2>
+            <p>
+                At Ivy Fisher Eventing, we specialize in the sourcing, production, and sale of top-quality event horses.
+                Ivy is constantly searching for exciting young prospects, often capturing talented horses before they reach the commercial market.
+            </p>
+            <p>
+                Each horse is produced with painstaking care from backing through to the top levels of international competition.
+                We offer horses for sale as well as syndicate and ownership opportunities to keep top prospects on the yard for upcoming championship seasons.
+            </p>
+        </div>
+    </section>
+
+    <!-- Horses For Sale Section -->
+    <section class="sales-listings-section">
+        <div class="sales-listings-header">
+            <h3>Current Sale &amp; Ownership Opportunities</h3>
+            <p>Explore our current horses available for sale or syndicate involvement. Get in touch for trial bookings.</p>
+        </div>
+
+        @if (horses == null)
+        {
+            <LoadingSpinner Message="Loading available horses..." />
+        }
+        else if (!horses.Any())
+        {
+            <div class="sales-empty">
+                <p>There are currently no horses listed for sale. Please contact Ivy directly to inquire about incoming prospects.</p>
+            </div>
+        }
+        else
+        {
+            <div class="sales-list">
+                @foreach (var horse in horses)
+                {
+                    <div class="sales-card">
+                        <div class="sales-card__header">
+                            <div class="sales-card__title-group">
+                                <h4 class="sales-card__name">@horse.Name</h4>
+                                <span class="sales-card__badge">@horse.SaleType</span>
+                            </div>
+                        </div>
+                        <p class="sales-card__desc">@horse.Description</p>
+                    </div>
+                }
+            </div>
+        }
+    </section>
+</main>
+
+<SiteFooter />
+
+@code {
+    private List<HorseListing>? horses;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // 1. Yield execution immediately so navigation is instant
+        await Task.Yield();
+
+        try
+        {
+            // 2. Read horses.json from wwwroot/data
+            string filePath = Path.Combine(Env.WebRootPath, "data", "sales.json");
+
+            if (File.Exists(filePath))
+            {
+                string jsonString = await File.ReadAllTextAsync(filePath);
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                horses = JsonSerializer.Deserialize<List<HorseListing>>(jsonString, options) ?? new();
+            }
+            else
+            {
+                horses = newList();
+            }
+        }
+        catch
+        {
+            horses = newList();
+        }
+    }
+
+    private class HorseListing
+    {
+        public string Name { get; set; } = string.Empty;
+        public string SaleType { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string Status { get; set; } = "Available";
+    }
+
+    private List<HorseListing> newList() => new();
+}

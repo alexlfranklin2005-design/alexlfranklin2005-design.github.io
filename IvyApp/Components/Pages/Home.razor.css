@@ -40,8 +40,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    /* Re-applies your deep green gradient over the moving video */
-    background-image: linear-gradient(var(--color-overlay-dark), var(--color-ivy-overlay));
+    background-image: var(--color-overlay);
     z-index: -1; /* Sandwiched between the video and the text */
 }
 
@@ -119,7 +118,7 @@
     margin: 0 auto;
     display: flex;
     flex-direction: row;
-    align-items: flex-start; /* Keeps it perfectly aligned with the top heading on desktop */
+    align-items: center; /* was flex-start */
     gap: 3rem;
 }
 
@@ -160,7 +159,7 @@
     .about-panel__copy h3 {
         margin-top: 2.5rem;
         margin-bottom: 0.8rem;
-        color: var(--color-ivy-green);
+        color: var(--color-accent-green);
         font-weight: 700;
         font-size: 1.5rem;
     }

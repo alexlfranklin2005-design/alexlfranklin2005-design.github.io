@@ -11,13 +11,23 @@
     <link rel="stylesheet" href="@Assets["IvyApp.styles.css"]" />
     <ImportMap />
     <link rel="icon" type="image/png" href="favicon.png" />
+
+    <!-- Shows the page loading overlay from the very first paint (see js/pageLoader.js).
+         A CSS failsafe in MainLayout.razor.css hides it if scripts never run. -->
+    <script>document.documentElement.classList.add("is-page-loading");</script>
+
     <HeadOutlet />
 </head>
 
 <body>
+    <!-- Pages are static by default so navigation never waits for the live server
+         connection. Only pages that need it (Home, Performances) set
+         @@rendermode InteractiveServer on themselves. -->
     <Routes />
+
     <ReconnectModal />
     <script src="@Assets["_framework/blazor.web.js"]"></script>
+    <script src="@Assets["js/pageLoader.js"]"></script>
 </body>
 
 </html>

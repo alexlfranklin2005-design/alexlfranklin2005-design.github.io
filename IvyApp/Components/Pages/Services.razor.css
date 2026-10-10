@@ -1,0 +1,158 @@
+﻿.services-page {
+    padding: 3rem 2rem 5rem;
+    max-width: 1280px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.services-header {
+    text-align: center;
+    margin-bottom: 3.5rem;
+}
+
+.services-heading {
+    font-size: 2.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--color-accent-green);
+    margin: 0 0 0.75rem 0;
+}
+
+.services-subheading {
+    font-size: 1.1rem;
+    color: #555;
+    margin: 0;
+    letter-spacing: 0.3px;
+}
+
+/* --- SERVICES GRID --- */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    width: 100%;
+}
+
+.service-card {
+    position: relative;
+    height: 450px;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+
+    .service-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+    }
+
+.service-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.service-card:hover .service-img {
+    transform: scale(1.06); /* Smooth zoom effect on hover */
+}
+
+/* --- ROYAL GREEN OVERLAY --- */
+.service-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Subtle base gradient so text is always readable */
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 60%);
+    transition: background 0.4s ease;
+    z-index: 1;
+}
+
+.service-card:hover .service-overlay {
+    /* Transitions into your rich royal green brand tint */
+    background: linear-gradient(to top, rgba(28, 56, 40, 0.95) 0%, rgba(28, 56, 40, 0.7) 100%);
+}
+
+/* --- CONTENT LAYER --- */
+.service-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 2.5rem 2rem;
+    box-sizing: border-box;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    transform: translateY(10px);
+    transition: transform 0.4s ease;
+}
+
+.service-card:hover .service-content {
+    transform: translateY(0);
+}
+
+.service-title {
+    color: white;
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+    letter-spacing: 0.5px;
+}
+
+.service-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #e2e8f0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.service-card:hover .service-action {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.service-action svg {
+    transition: transform 0.2s ease;
+}
+
+.service-action:hover svg {
+    transform: translateX(4px);
+}
+
+/* --- RESPONSIVE LAYOUT --- */
+@media (max-width: 1024px) {
+    .services-grid {
+        grid-template-columns: repeat(1, 1fr); /* Stacks cards on tablets and phones */
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .service-card {
+        height: 380px;
+    }
+
+    .services-heading {
+        font-size: 2.25rem;
+    }
+}

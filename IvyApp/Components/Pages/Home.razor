@@ -8,7 +8,13 @@
     <section class="photo-stage @(panelState == "open" ? "photo-stage--collapsed" : "")">
 
         <!-- 1. The looping background video -->
-        <video class="photo-stage__video" autoplay loop muted playsinline oncanplay="this.play()">
+        <video class="photo-stage__video"
+               autoplay
+               loop
+               muted
+               playsinline
+               poster="/images/Home Cover/CoverFallback.jpg"
+               oncanplay="this.play()">
             <source src="/images/Home Cover/Loop.mp4" type="video/mp4" />
         </video>
 
@@ -36,21 +42,19 @@
             </div>
             <div class="about-panel__copy">
                 <h3>Where I am Based</h3>
-                <p>Based in the heart of the countryside, our yard is perfectly situated for accessing some of the best training facilities and competition venues in the region.</p>
-
-                <h3>How I Got Into Horse Riding</h3>
-                <p>My passion for equestrian sports began at a very young age, starting out at the local riding school before graduating to a rather cheeky pony club pony.</p>
+                <p>Based in the heart of the Leicestershire 20 minutes from Market Harborough, our yard is perfectly situated for accessing some of the best training facilities and competition venues in the country. With 12 Monarch stables, walker, lunge pen, 60x45 arena and hacking for miles, it makes the ultimate set up for producing a young event horse.</p>
+                
+                <h3>My horses</h3>
+                <p>Star of the yard, Balief De Reve is a 2015 liver chestnut mare by Hermes De Reve out of Lazio. We bought her as a young horse from Vere Philips and have high hopes for her next year, including the U25 National Championships and Bramham next year. Tick Tock ELM is a 2021 bay mare by Conticco who has had a steady start to her career as an event horse; however, she ticks all of the boxes to be a lovely horse for the future. Both horses are open to ownership opportunities, so do get in touch if interested.</p>
 
                 <h3>Best Experiences in Eventing So Far</h3>
-                <p>To date, the journey has been filled with incredible highs and invaluable learning curves.</p>
+                <p>I have been fortunate enough to represent Great Britain on two different horses at Young Rider Europeans in 2024 and 2026, going double clear on both occasions and finishing 12th and 10th respectively. </p>
             </div>
         </div>
-
-        <footer class="about-panel__footer">
-            <img src="images/Logo/logo_banner.png" alt="Ivy Fisher Eventing Logo" class="about-panel__footer-logo" />
-        </footer>
+        
     </section>
 
+    <SiteFooter />
 </div>
 
 @code {
