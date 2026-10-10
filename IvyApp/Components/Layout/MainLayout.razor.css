@@ -67,13 +67,9 @@
     transition: opacity 0.25s ease, visibility 0s linear 0.25s;
 }
 
-/* Fades in after a short delay so very quick navigations never flash a spinner */
 html.is-page-loading .page-loader {
-    opacity: 1;
-    visibility: visible;
-    transition: opacity 0.2s ease 0.15s, visibility 0s linear 0.15s;
-    /* Failsafe: if scripts never clear the loading state, give up after 12s */
-    animation: page-loader-failsafe 0.01s linear 12s forwards;
+    display: flex;
+    pointer-events: auto;
 }
 
 @keyframes page-loader-failsafe {

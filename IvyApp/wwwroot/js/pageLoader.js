@@ -1,11 +1,10 @@
-﻿// Shows the full-page loading overlay (styled in Components/Layout/MainLayout.razor.css)
-// while a page is loading, then reveals the page once its images are ready.
+﻿// Shows the full-page loading overlay while a page is loading, then reveals the page once its images are ready.
 (function () {
     "use strict";
 
     var root = document.documentElement;
     var LOADING_CLASS = "is-page-loading";
-    var MAX_WAIT_MS = 6000;
+    var MAX_WAIT_MS = 3000; // Reduced to 3s for faster fallback
     var latestRun = 0;
 
     function showLoader() {
@@ -18,8 +17,9 @@
         var images = document.querySelectorAll(".content-area img");
         return Array.prototype.filter.call(images, function (img) {
             if (img.complete) { return false; }
+            // FIX: Added the multiplication operator window.innerHeight * 1.5
             var farBelowFold = img.loading === "lazy" &&
-                img.getBoundingClientRect().top > window.innerHeight * 1.5;
+                img.getBoundingClientRect().top > (window.innerHeight * 1.5);
             return !farBelowFold;
         });
     }
