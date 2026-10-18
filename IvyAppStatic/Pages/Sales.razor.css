@@ -15,15 +15,13 @@
 
 
 .livery-header-bar {
-    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Space between the back button and the title */
+    margin-bottom: 3.5rem;
 }
 
 .livery-back-bar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin: 0;
-    z-index: 2;
     display: flex;
     justify-content: flex-start;
 }
