@@ -1,9 +1,10 @@
 ﻿.stage-container {
     --panel-transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     --panel-peek-offset: 70%;
-    /* The Fix: Force flexbox to lock exactly to the available viewport space */
     flex-grow: 1;
-    height: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 80px); /* Gives the container real full-screen height */
     position: relative;
     overflow: hidden;
     width: 100%;

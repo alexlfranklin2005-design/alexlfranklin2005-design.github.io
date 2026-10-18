@@ -2,35 +2,37 @@
     background-color: var(--color-bg-medium);
     border-top: 3px solid var(--color-accent-green);
     color: var(--color-text-main);
-    padding: 1.25rem 2rem; /* Compact height */
+    padding: 1.25rem 2rem;
+    box-sizing: border-box;
 }
 
 .site-footer__container {
     max-width: 1100px;
     margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: auto 1fr; /* logo on the left, links take the rest */
     align-items: center;
-    gap: 2rem;
+    column-gap: 2rem;
 }
 
-/* Brand Section */
 .site-footer__brand {
     display: flex;
     align-items: center;
+    justify-self: start;
 }
 
 .site-footer__logo {
-    height: 40px; /* Slim logo size */
+    height: 40px;
     width: auto;
     object-fit: contain;
 }
 
-/* Horizontal Contact Links */
 .site-footer__contact {
     display: flex;
     align-items: center;
-    gap: 2.5rem; /* Generous spacing between items in the row */
+    justify-content: flex-end;
+    gap: 2.5rem;
+    min-width: 0;
 }
 
 .site-footer__link {
@@ -57,30 +59,31 @@
     text-decoration: underline;
 }
 
+/* Narrow screens: logo stays left, links stack in a column on the right */
 @media (max-width: 800px) {
     .site-footer {
         padding: 1.25rem 1rem;
-        box-sizing: border-box;
     }
 
     .site-footer__container {
-        flex-direction: row; /* keep logo left, links right */
-        justify-content: space-between;
-        align-items: center;
-        gap: 1rem;
-        text-align: right;
+        column-gap: 1rem;
+    }
+
+    .site-footer__logo {
+        height: 32px;
     }
 
     .site-footer__contact {
-        flex-direction: column; /* links stack vertically */
-        align-items: flex-end; /* pushes each link to the right edge */
+        flex-direction: column;
+        align-items: flex-end;
         gap: 0.75rem;
     }
 
     .site-footer__link {
-        flex-direction: row-reverse; /* puts the icon on the right edge so icons line up */
+        flex-direction: row-reverse; /* icon on the right edge; delete this line for icon-left */
         white-space: normal;
-        overflow-wrap: anywhere; /* a long email wraps instead of overflowing */
+        overflow-wrap: anywhere;
         font-size: 0.9rem;
+        text-align: right;
     }
 }

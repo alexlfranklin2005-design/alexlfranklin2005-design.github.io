@@ -15,16 +15,25 @@
 /* --- CONTROLS BAR --- */
 .controls-bar {
     display: flex;
+    flex-wrap: wrap; /* Allows search bar to drop down when space runs out */
+    justify-content: center; /* Centers the Sort & Filter buttons when wrapped */
     gap: 1rem;
     margin-bottom: 2rem;
 }
 
 .control-popout {
     position: relative;
+    flex: 0 0 auto; /* Keeps Sort & Filter buttons at their natural width */
 }
 
 .control-search {
-    flex: 1; /* Takes up remaining space in the bar */
+    /* 
+       flex-grow: 1    -> Fills remaining width on wide screens & 100% width when wrapped
+       flex-shrink: 1  -> Allows shrinking down to min-width
+       flex-basis: 250px -> The ideal width that triggers wrapping when space runs short
+    */
+    flex: 1 1 250px;
+    min-width: 200px; /* Prevents the search input from squishing */
 }
 
 .search-input {
@@ -187,10 +196,6 @@
 
 /* --- RESPONSIVE: STACKED CARDS ON NARROW SCREENS --- */
 @media (max-width: 800px) {
-    .controls-bar {
-        flex-wrap: wrap;
-    }
-
     .table-wrapper {
         overflow-x: visible;
         box-shadow: none;
