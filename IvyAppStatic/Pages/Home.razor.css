@@ -204,3 +204,23 @@
         line-height: 1.6;
         color: rgba(0, 0, 0, 0.8);
     }
+
+/* --- LOADING SPINNER (banner) --- */
+.stage-loading {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    opacity: 1;
+    transition: opacity 0.5s ease, visibility 0s linear 0s;
+}
+
+.stage-loading--hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.5s ease, visibility 0s linear 0.5s;
+}
