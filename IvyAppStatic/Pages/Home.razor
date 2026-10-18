@@ -2,17 +2,21 @@
 @implements IAsyncDisposable
 @inject IJSRuntime JS
 
-<div class="stage-container" data-panel-state="@panelState" @ref="stageRef">
+<div class="stage-container"
+     data-panel-state="@panelState"
+     @ref="stageRef">
 
     <section class="photo-stage @(panelState == "open" ? "photo-stage--collapsed" : "")">
 
         <!-- 1. The looping background video -->
-        <video class="photo-stage__video"
+        <video @ref="videoRef"
+               class="photo-stage__video"
                autoplay
                loop
                muted
                playsinline
-               oncanplay="this.play()">
+               preload="auto"
+               poster="/images/Home Cover/CoverFallback.jpg">
             <source src="/images/Home Cover/Loop.mp4" type="video/mp4" />
         </video>
 
@@ -41,7 +45,7 @@
             <div class="about-panel__copy">
                 <h3>Where I am Based</h3>
                 <p>Based in the heart of the Leicestershire 20 minutes from Market Harborough, our yard is perfectly situated for accessing some of the best training facilities and competition venues in the country. With 12 Monarch stables, walker, lunge pen, 60x45 arena and hacking for miles, it makes the ultimate set up for producing a young event horse.</p>
-                
+
                 <h3>My horses</h3>
                 <p>Star of the yard, Balief De Reve is a 2015 liver chestnut mare by Hermes De Reve out of Lazio. We bought her as a young horse from Vere Philips and have high hopes for her next year, including the U25 National Championships and Bramham next year. Tick Tock ELM is a 2021 bay mare by Conticco who has had a steady start to her career as an event horse; however, she ticks all of the boxes to be a lovely horse for the future. Both horses are open to ownership opportunities, so do get in touch if interested.</p>
 
@@ -49,7 +53,7 @@
                 <p>I have been fortunate enough to represent Great Britain on two different horses at Young Rider Europeans in 2024 and 2026, going double clear on both occasions and finishing 12th and 10th respectively. </p>
             </div>
         </div>
-        
+
     </section>
 
     <SiteFooter />
@@ -61,8 +65,14 @@
 
     private const double MaxAccumulator = 220;
 
+    // Transition lock: ignores wheel momentum while the panel animates.
+    // TransitionMs must be slightly above --panel-duration in the CSS (0.6s).
+    private bool isTransitioning = false;
+    private const int TransitionMs = 650;
+
     private ElementReference stageRef;
     private ElementReference panelRef;
+    private ElementReference videoRef;
     private IJSObjectReference? _module;
     private IJSObjectReference? _handler;
     private DotNetObjectReference<Home>? _dotNetRef;
@@ -75,17 +85,22 @@
         {
             _dotNetRef = DotNetObjectReference.Create(this);
 
-            // Using absolute path to prevent root-relative path resolution failures
             _module = await JS.InvokeAsync<IJSObjectReference>("import", "/js/scrollHandler.js");
 
-            if (_module is not null)
+            // Mute and start the background video (Blazor doesn't reliably apply the muted attribute)
+            try
             {
-                _handler = await _module.InvokeAsync<IJSObjectReference>("init", _dotNetRef, stageRef, panelRef);
+                await _module.InvokeVoidAsync("playVideo", videoRef);
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Video autoplay failed: {ex.Message}");
+            }
+
+            _handler = await _module.InvokeAsync<IJSObjectReference>("init", _dotNetRef, stageRef, panelRef);
         }
         catch (Exception ex)
         {
-            // Logging to console rather than letting an unhandled exception break the DOM tree
             Console.WriteLine($"Home page scroll handler failed to load: {ex.Message}");
         }
     }
@@ -93,6 +108,8 @@
     [JSInvokable]
     public void OnWheelDelta(double deltaY)
     {
+        if (isTransitioning) return;
+
         if (deltaY > 0 && panelState != "open")
         {
             scrollAccumulator = MaxAccumulator;
@@ -124,9 +141,20 @@
 
     private void SetState(string newState)
     {
-        if (newState == panelState) return;
+        if (newState == panelState || isTransitioning) return;
+
+        isTransitioning = true;
         panelState = newState;
         StateHasChanged();
+
+        _ = ReleaseTransitionLockAsync();
+    }
+
+    private async Task ReleaseTransitionLockAsync()
+    {
+        // CSS duration plus a small buffer to swallow trailing momentum events
+        await Task.Delay(TransitionMs + 100);
+        isTransitioning = false;
     }
 
     public async ValueTask DisposeAsync()

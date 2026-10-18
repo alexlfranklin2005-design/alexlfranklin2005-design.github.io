@@ -1,4 +1,10 @@
-﻿export function init(dotNetRef, stageEl, panelEl) {
+﻿export function playVideo(videoEl) {
+    if (!videoEl) return;
+    videoEl.muted = true;
+    videoEl.play().catch(() => { /* autoplay blocked: poster stays visible */ });
+}
+
+export function init(dotNetRef, stageEl, panelEl) {
     let lastCall = 0;
     let startY = 0;
     let lastY = 0;
