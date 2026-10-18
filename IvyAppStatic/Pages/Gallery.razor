@@ -1,8 +1,9 @@
 ﻿@page "/gallery"
 @implements IDisposable
 @using System.Text.RegularExpressions
+@using System.IO
 
-<PageTitle>Gallery</PageTitle>
+<PageTitle>Gallery - Ivy Fisher Eventing</PageTitle>
 
 @if (!isReady)
 {
@@ -78,21 +79,27 @@
 
     private void OnImageDone(int index)
     {
-        // Only the priority images count towards the loading screen
+        // Only the priority images count towards revealing the gallery
         if (index >= PriorityCount || isReady) return;
 
         doneCount++;
         if (doneCount >= Needed)
         {
             isReady = true;
+            StateHasChanged();
         }
     }
 
-    // "Bicton 3 Star L Young Riders 2024_1.jpg" -> "Bicton 3 Star L Young Riders 2024"
-    private static string ToCaption(string file) =>
-        Regex.Replace(Path.GetFileNameWithoutExtension(file), @"_\d+$", "");
+    // Converts "Bicton 3 Star L Young Riders 2024_1.jpg" -> "Bicton 3 Star L Young Riders 2024"
+    private static string ToCaption(string file)
+    {
+        return Regex.Replace(Path.GetFileNameWithoutExtension(file), @"_\d+$", "");
+    }
 
     private record Photo(string Url, string Caption);
 
-    public void Dispose() => disposed = true;
+    public void Dispose()
+    {
+        disposed = true;
+    }
 }

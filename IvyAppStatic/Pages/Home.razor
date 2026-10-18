@@ -16,11 +16,10 @@
                muted
                playsinline
                preload="auto"
-               poster="/images/Home Cover/CoverFallback.jpg"
-               @onloadeddata="OnVideoReady"
-               @onerror="OnVideoReady">
+               poster="/images/Home Cover/CoverFallback.jpg">
             <source src="/images/Home Cover/Loop.mp4" type="video/mp4" />
         </video>
+
 
         <h1 class="photo-stage__title">
             @(panelState == "open" ? "ABOUT ME" : "IVY FISHER EVENTING")
@@ -34,11 +33,6 @@
                 </svg>
             </button>
         }
-
-        <!-- Loading spinner: covers the banner until the video is ready -->
-        <div class="stage-loading @(isVideoReady ? "stage-loading--hidden" : "")" aria-hidden="@(isVideoReady ? "true" : "false")">
-            <LoadingSpinner Message="" />
-        </div>
     </section>
 
     <section class="about-panel @panelState" @ref="panelRef">
@@ -74,11 +68,6 @@
     private bool isTransitioning = false;
     private const int TransitionMs = 650;
 
-    // Loading spinner: hidden once the video has its first frame, or after the failsafe
-    private bool isVideoReady = false;
-    private bool disposed = false;
-    private const int LoadingFailsafeMs = 8000;
-
     private ElementReference stageRef;
     private ElementReference panelRef;
     private ElementReference videoRef;
@@ -89,8 +78,6 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
-
-        _ = LoadingFailsafeAsync();
 
         try
         {
@@ -113,22 +100,6 @@
         catch (Exception ex)
         {
             Console.WriteLine($"Home page scroll handler failed to load: {ex.Message}");
-        }
-    }
-
-    private void OnVideoReady()
-    {
-        isVideoReady = true;
-    }
-
-    private async Task LoadingFailsafeAsync()
-    {
-        await Task.Delay(LoadingFailsafeMs);
-
-        if (!disposed && !isVideoReady)
-        {
-            isVideoReady = true;
-            await InvokeAsync(StateHasChanged);
         }
     }
 
@@ -186,8 +157,6 @@
 
     public async ValueTask DisposeAsync()
     {
-        disposed = true;
-
         if (_handler is not null)
         {
             try { await _handler.InvokeVoidAsync("dispose"); } catch { }
