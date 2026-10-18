@@ -57,17 +57,30 @@
     text-decoration: underline;
 }
 
-/* Responsive Stacking for Mobile Screens */
 @media (max-width: 800px) {
+    .site-footer {
+        padding: 1.25rem 1rem;
+        box-sizing: border-box;
+    }
+
     .site-footer__container {
-        flex-direction: column;
-        gap: 1.25rem;
-        text-align: center;
+        flex-direction: row; /* keep logo left, links right */
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        text-align: right;
     }
 
     .site-footer__contact {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 1.25rem;
+        flex-direction: column; /* links stack vertically */
+        align-items: flex-end; /* pushes each link to the right edge */
+        gap: 0.75rem;
+    }
+
+    .site-footer__link {
+        flex-direction: row-reverse; /* puts the icon on the right edge so icons line up */
+        white-space: normal;
+        overflow-wrap: anywhere; /* a long email wraps instead of overflowing */
+        font-size: 0.9rem;
     }
 }
