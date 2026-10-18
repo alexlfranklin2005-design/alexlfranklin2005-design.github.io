@@ -86,7 +86,7 @@
         try
         {
             horses = await Http.GetFromJsonAsync<List<HorseListing>>(
-                "data/sales.json")
+                "Data/sales.json")
                 ?? new();
         }
         catch
