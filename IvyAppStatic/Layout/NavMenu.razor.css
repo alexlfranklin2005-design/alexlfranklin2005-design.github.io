@@ -1,34 +1,32 @@
 .nav-links {
     display: flex;
     flex-direction: row;
-    gap: 2.5rem; /* Spacing between the links */
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: clamp(0.75rem, 4vw, 2.5rem); /* shrinks smoothly on narrow screens */
     margin: 0;
     padding: 0;
     align-items: center;
 }
 
     .nav-links ::deep .nav-item {
-        color: rgba(0, 0, 0, 0.8); /* Dark grey, almost black */
+        color: rgba(0, 0, 0, 0.8);
         text-decoration: none;
-        font-size: 0.85rem; /* Slightly smaller text */
-        font-weight: 400; /* Thinner, more elegant font weight */
+        font-size: 0.85rem;
+        font-weight: 400;
         letter-spacing: 0.5px;
+        white-space: nowrap; /* never split a link word across lines */
         transition: color 0.2s ease-in-out;
     }
 
-        .nav-links ::deep .nav-item:hover, .nav-links ::deep .nav-item.active {
-            color: var(--color-ivy-green); /* Turns ivy green when hovered or clicked */
+        .nav-links ::deep .nav-item:hover,
+        .nav-links ::deep .nav-item.active {
+            color: var(--color-accent-green);
         }
 
-
-@media (max-width: 768px) {
-    .nav-links {
-        flex-wrap: wrap; /* Allows links to wrap to a second line if needed */
-        justify-content: center;
-        gap: 1.25rem; /* Tighter spacing for mobile */
+@media (max-width: 480px) {
+    .nav-links ::deep .nav-item {
+        font-size: 0.75rem;
+        letter-spacing: 0.25px;
     }
-
-        .nav-links ::deep .nav-item {
-            font-size: 0.8rem; /* Slightly more compact text size */
-        }
 }
