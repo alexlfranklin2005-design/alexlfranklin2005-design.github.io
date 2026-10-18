@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<OverrideHtmlAssetPlaceholders>true</OverrideHtmlAssetPlaceholders>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.9" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.9" PrivateAssets="all" />
+	</ItemGroup>
+
+	<!-- Builds a C# list of every image in wwwroot/images/Gallery at compile time -->
+	<Target Name="GenerateGalleryManifest" BeforeTargets="CoreCompile">
+		<ItemGroup>
+			<GalleryFile Include="wwwroot/images/Gallery/*.jpg;wwwroot/images/Gallery/*.jpeg;wwwroot/images/Gallery/*.png;wwwroot/images/Gallery/*.webp" />
+		</ItemGroup>
+		<PropertyGroup>
+			<GalleryLines>@(GalleryFile->'        "%(Filename)%(Extension)",', '%0A')</GalleryLines>
+			<GalleryCode>
+				namespace $(RootNamespace)%3B
+
+				public static class GalleryManifest
+				{
+				public static readonly string[] Files =
+				{
+				$(GalleryLines)
+				}%3B
+				}
+			</GalleryCode>
+		</PropertyGroup>
+		<WriteLinesToFile File="$(IntermediateOutputPath)GalleryManifest.g.cs" Lines="$(GalleryCode)" Overwrite="true" />
+		<ItemGroup>
+			<Compile Include="$(IntermediateOutputPath)GalleryManifest.g.cs" />
+		</ItemGroup>
+	</Target>
+
+</Project>

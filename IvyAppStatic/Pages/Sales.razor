@@ -1,7 +1,5 @@
 ﻿@page "/sales"
-@rendermode InteractiveServer
-@using System.Text.Json
-@inject IWebHostEnvironment Env
+@inject HttpClient Http
 
 <PageTitle>Horse Sales &amp; Ownership - Ivy Fisher Eventing</PageTitle>
 
@@ -85,28 +83,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // 1. Yield execution immediately so navigation is instant
-        await Task.Yield();
-
         try
         {
-            // 2. Read horses.json from wwwroot/data
-            string filePath = Path.Combine(Env.WebRootPath, "data", "sales.json");
-
-            if (File.Exists(filePath))
-            {
-                string jsonString = await File.ReadAllTextAsync(filePath);
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                horses = JsonSerializer.Deserialize<List<HorseListing>>(jsonString, options) ?? new();
-            }
-            else
-            {
-                horses = newList();
-            }
+            horses = await Http.GetFromJsonAsync<List<HorseListing>>(
+                "data/sales.json")
+                ?? new();
         }
         catch
         {
-            horses = newList();
+            horses = new();
         }
     }
 

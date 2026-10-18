@@ -1,0 +1,34 @@
+﻿@page "/gallery"
+@using System.Text.RegularExpressions
+
+<PageTitle>Gallery</PageTitle>
+
+<div class="gallery-container">
+    @foreach (var photo in Photos)
+    {
+        <figure class="gallery-item">
+            <div class="image-wrapper">
+                <img src="@photo.Url" alt="@photo.Caption" loading="lazy" />
+                <div class="overlay">
+                    <figcaption class="caption">@photo.Caption</figcaption>
+                </div>
+            </div>
+        </figure>
+    }
+</div>
+<SiteFooter />
+
+@code {
+    private static readonly List<Photo> Photos = GalleryManifest.Files
+        .OrderBy(f => f)
+        .Select(f => new Photo(
+            $"images/Gallery/{Uri.EscapeDataString(f)}",
+            ToCaption(f)))
+        .ToList();
+
+    // "Bicton 3 Star L Young Riders 2024_1.jpg" -> "Bicton 3 Star L Young Riders 2024"
+    private static string ToCaption(string file) =>
+        Regex.Replace(Path.GetFileNameWithoutExtension(file), @"_\d+$", "");
+
+    private record Photo(string Url, string Caption);
+}

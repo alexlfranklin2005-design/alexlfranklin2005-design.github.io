@@ -24,7 +24,7 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Publish Blazor project
-        run: dotnet publish IvyApp/IvyApp.csproj -c Release -o published
+        run: dotnet publish IvyAppStatic/IvyAppStatic.csproj -c Release -o published
 
       - name: Upload artifact for GitHub Pages
         uses: actions/upload-pages-artifact@v3
