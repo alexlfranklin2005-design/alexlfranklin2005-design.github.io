@@ -19,3 +19,16 @@
         .nav-links ::deep .nav-item:hover, .nav-links ::deep .nav-item.active {
             color: var(--color-ivy-green); /* Turns ivy green when hovered or clicked */
         }
+
+
+@media (max-width: 768px) {
+    .nav-links {
+        flex-wrap: wrap; /* Allows links to wrap to a second line if needed */
+        justify-content: center;
+        gap: 1.25rem; /* Tighter spacing for mobile */
+    }
+
+        .nav-links ::deep .nav-item {
+            font-size: 0.8rem; /* Slightly more compact text size */
+        }
+}
