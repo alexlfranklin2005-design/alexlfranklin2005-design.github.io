@@ -24,15 +24,24 @@ else
         }
     </div>
 }
-
 <SiteFooter />
 
 @code {
-    private List<Photo>? photos;
+    // 1. Make the list static so it persists in memory across page navigations
+    private static List<Photo>? cachedPhotos;
+
+    // 2. Point photos to the cached version
+    private List<Photo>? photos => cachedPhotos;
 
     protected override async Task OnInitializedAsync()
     {
-        // 1. Yield execution immediately so the loading spinner renders instantly on click
+        // 3. If photos were already loaded previously, skip loading entirely!
+        if (cachedPhotos != null)
+        {
+            return;
+        }
+
+        // Yield execution immediately so the loading spinner renders instantly on click
         await Task.Yield();
 
         var loadedPhotos = new List<Photo>();
@@ -40,7 +49,6 @@ else
 
         if (Directory.Exists(path))
         {
-            // Case-insensitive search for extensions
             var files = Directory.GetFiles(path, "*.*")
                 .Where(f => f.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
                             f.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase));
@@ -50,7 +58,6 @@ else
                 string fileNameWithoutExt = Path.GetFileNameWithoutExtension(file);
                 string fileNameWithExt = Path.GetFileName(file);
 
-                // Remove trailing underscores and numbers (e.g., "_1", "_42")
                 string cleanCaption = System.Text.RegularExpressions.Regex.Replace(fileNameWithoutExt, @"_\d+$", "");
 
                 loadedPhotos.Add(new Photo
@@ -61,8 +68,8 @@ else
             }
         }
 
-        // 2. Assign the loaded list to trigger the UI update
-        photos = loadedPhotos;
+        // Assign to cache so subsequent visits bypass the loading spinner
+        cachedPhotos = loadedPhotos;
     }
 
     private class Photo

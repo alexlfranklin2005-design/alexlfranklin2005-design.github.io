@@ -62,4 +62,10 @@
     window.addEventListener("pageshow", function (event) {
         if (event.persisted) { hideLoaderWhenReady(); }
     });
+
+    // Add this at the very bottom of wwwroot/js/pageLoader.js
+    // Hard Safety Net: Forcibly remove the loading screen after 3.5 seconds maximum
+    setTimeout(function () {
+        root.classList.remove(LOADING_CLASS);
+    }, 3500);
 })();
