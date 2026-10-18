@@ -151,8 +151,7 @@
     {
         try
         {
-            allResults = await Http.GetFromJsonAsync<List<EventResult>>("data/performances.json")
-                         ?? new List<EventResult>();
+            allResults = await Http.GetFromJsonAsync<List<EventResult>>("data/performances.json");
         }
         catch
         {
