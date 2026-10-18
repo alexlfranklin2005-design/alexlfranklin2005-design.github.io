@@ -1,14 +1,31 @@
 ﻿@page "/gallery"
+@implements IDisposable
 @using System.Text.RegularExpressions
 
 <PageTitle>Gallery</PageTitle>
 
-<div class="gallery-container">
-    @foreach (var photo in Photos)
+@if (!isReady)
+{
+    <div class="gallery-loading">
+        <LoadingSpinner Message="" />
+        <p class="gallery-loading-text">Loading gallery...</p>
+    </div>
+}
+
+<div class="gallery-container @(isReady ? "gallery-container--ready" : "gallery-container--hidden")">
+    @for (var i = 0; i < Photos.Count; i++)
     {
+        var photo = Photos[i];
+        var index = i;
+        var isPriority = index < PriorityCount;
+
         <figure class="gallery-item">
             <div class="image-wrapper">
-                <img src="@photo.Url" alt="@photo.Caption" loading="lazy" />
+                <img src="@photo.Url"
+                     alt="@photo.Caption"
+                     loading="@(isPriority ? "eager" : "lazy")"
+                     @onload="() => OnImageDone(index)"
+                     @onerror="() => OnImageDone(index)" />
                 <div class="overlay">
                     <figcaption class="caption">@photo.Caption</figcaption>
                 </div>
@@ -16,9 +33,16 @@
         </figure>
     }
 </div>
+
 <SiteFooter />
 
 @code {
+    // Gallery is revealed once this many images at the top have loaded
+    private const int PriorityCount = 15;
+
+    // Reveal anyway after this long, so the spinner can never hang
+    private const int FailsafeMs = 15000;
+
     private static readonly List<Photo> Photos = GalleryManifest.Files
         .OrderBy(f => f)
         .Select(f => new Photo(
@@ -26,9 +50,49 @@
             ToCaption(f)))
         .ToList();
 
+    private bool isReady = false;
+    private bool disposed = false;
+    private int doneCount = 0;
+
+    private int Needed => Math.Min(PriorityCount, Photos.Count);
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        if (Needed == 0)
+        {
+            isReady = true;
+            StateHasChanged();
+            return;
+        }
+
+        await Task.Delay(FailsafeMs);
+
+        if (!disposed && !isReady)
+        {
+            isReady = true;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void OnImageDone(int index)
+    {
+        // Only the priority images count towards the loading screen
+        if (index >= PriorityCount || isReady) return;
+
+        doneCount++;
+        if (doneCount >= Needed)
+        {
+            isReady = true;
+        }
+    }
+
     // "Bicton 3 Star L Young Riders 2024_1.jpg" -> "Bicton 3 Star L Young Riders 2024"
     private static string ToCaption(string file) =>
         Regex.Replace(Path.GetFileNameWithoutExtension(file), @"_\d+$", "");
 
     private record Photo(string Url, string Caption);
+
+    public void Dispose() => disposed = true;
 }

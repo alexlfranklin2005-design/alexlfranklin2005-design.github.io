@@ -86,7 +86,10 @@
 
         @if (allResults is null)
         {
-            <p class="status-text">Loading results...</p>
+            <div class="gallery-loading">
+                <LoadingSpinner Message="" />
+                <p class="gallery-loading-text">Loading performances...</p>
+            </div>
         }
         else if (!DisplayedResults.Any())
         {
