@@ -29,6 +29,7 @@
     align-items: center;
     text-align: center;
     overflow: hidden;
+    isolation: isolate; /* keeps video/overlay/title ordering inside the banner */
     transition: height var(--panel-duration) var(--panel-ease);
     z-index: 1;
 }
@@ -45,6 +46,8 @@
     height: 100%;
     object-fit: cover;
     z-index: 0;
+    transform: translateZ(0); /* video gets its layer now, at the bottom */
+    backface-visibility: hidden;
 }
 
 .photo-stage__overlay {
@@ -54,10 +57,16 @@
     width: 100%;
     height: 100%;
     background-image: var(--color-overlay);
+    pointer-events: none;
     z-index: 1;
+    transform: translateZ(0); /* overlay gets its own layer above the video */
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 .photo-stage__title {
+    position: relative;
+    z-index: 2;
     margin: 0;
     color: white;
     font-size: 5rem;
@@ -66,9 +75,7 @@
     text-transform: uppercase;
     letter-spacing: 3px;
     transition: font-size var(--panel-duration) var(--panel-ease);
-    z-index: 2;
 }
-
 .photo-stage--collapsed .photo-stage__title {
     font-size: 2.5rem;
 }
