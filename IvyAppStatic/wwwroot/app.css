@@ -6,6 +6,7 @@
     /* Text */
     --color-text-main: #000000;
     /* Overlay */
+    --color-overlay-solid-home: rgb(6, 45, 22);
     --color-overlay: linear-gradient(rgba(6, 45, 22, 0.85), rgba(6, 45, 22, 0.85));
 }
 
