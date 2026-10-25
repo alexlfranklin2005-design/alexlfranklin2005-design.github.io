@@ -11,66 +11,76 @@
     <div class="performances-section fade-in">
 
         <div class="controls-bar">
-            <!-- Sort Popout -->
-            <div class="control-popout">
-                <button class="popout-toggle" @onclick="ToggleSortPanel" @onclick:stopPropagation="true">
-                    Sort
-                </button>
-                @if (showSortPanel)
-                {
-                    <div class="popout-panel" @onclick:stopPropagation="true">
-                        <label class="popout-option">
-                            <input type="radio" name="sort" checked="@(sortOption == "newest")" @onchange='() => SetSort("newest")' />
-                            Newest First
-                        </label>
-                        <label class="popout-option">
-                            <input type="radio" name="sort" checked="@(sortOption == "oldest")" @onchange='() => SetSort("oldest")' />
-                            Oldest First
-                        </label>
-                        <label class="popout-option">
-                            <input type="radio" name="sort" checked="@(sortOption == "position")" @onchange='() => SetSort("position")' />
-                            Best Position
-                        </label>
-                        <label class="popout-option">
-                            <input type="radio" name="sort" checked="@(sortOption == "dressage")" @onchange='() => SetSort("dressage")' />
-                            Lowest Dressage
-                        </label>
-                        <label class="popout-option">
-                            <input type="radio" name="sort" checked="@(sortOption == "total")" @onchange='() => SetSort("total")' />
-                            Lowest Total Points
-                        </label>
-                    </div>
-                }
-            </div>
 
-            <!-- Filter Popout -->
-            <div class="control-popout">
-                <button class="popout-toggle" @onclick="ToggleFilterPanel" @onclick:stopPropagation="true">
-                    Filter
-                </button>
-                @if (showFilterPanel)
-                {
-                    <div class="popout-panel" @onclick:stopPropagation="true">
-                        <label class="popout-option popout-option--block">
-                            Horse:
-                            <select class="popout-select" @bind="selectedHorse">
-                                <option value="All Horses">All Horses</option>
-                                @foreach (var horse in HorseNames)
-                                {
-                                    <option value="@horse">@horse</option>
-                                }
-                            </select>
-                        </label>
-                        <label class="popout-option">
-                            <input type="checkbox" @bind="sjClearOnly" />
-                            SJ Clear
-                        </label>
-                        <label class="popout-option">
-                            <input type="checkbox" @bind="xcClearOnly" />
-                            XC Clear
-                        </label>
-                    </div>
-                }
+            <!-- Group containing both Sort and Filter buttons -->
+            <div class="control-group">
+                <!-- Sort Popout -->
+                <div class="control-popout">
+                    <button class="popout-toggle"
+                            disabled="@(allResults is null)"
+                            @onclick="ToggleSortPanel"
+                            @onclick:stopPropagation="true">
+                        Sort
+                    </button>
+                    @if (showSortPanel)
+                    {
+                        <div class="popout-panel" @onclick:stopPropagation="true">
+                            <label class="popout-option">
+                                <input type="radio" name="sort" checked="@(sortOption == "newest")" @onchange='() => SetSort("newest")' />
+                                Newest First
+                            </label>
+                            <label class="popout-option">
+                                <input type="radio" name="sort" checked="@(sortOption == "oldest")" @onchange='() => SetSort("oldest")' />
+                                Oldest First
+                            </label>
+                            <label class="popout-option">
+                                <input type="radio" name="sort" checked="@(sortOption == "position")" @onchange='() => SetSort("position")' />
+                                Best Position
+                            </label>
+                            <label class="popout-option">
+                                <input type="radio" name="sort" checked="@(sortOption == "dressage")" @onchange='() => SetSort("dressage")' />
+                                Lowest Dressage
+                            </label>
+                            <label class="popout-option">
+                                <input type="radio" name="sort" checked="@(sortOption == "total")" @onchange='() => SetSort("total")' />
+                                Lowest Total Points
+                            </label>
+                        </div>
+                    }
+                </div>
+
+                <!-- Filter Popout -->
+                <div class="control-popout">
+                    <button class="popout-toggle"
+                            disabled="@(allResults is null)"
+                            @onclick="ToggleFilterPanel"
+                            @onclick:stopPropagation="true">
+                        Filter
+                    </button>
+                    @if (showFilterPanel)
+                    {
+                        <div class="popout-panel" @onclick:stopPropagation="true">
+                            <label class="popout-option popout-option--block">
+                                Horse:
+                                <select class="popout-select" @bind="selectedHorse">
+                                    <option value="All Horses">All Horses</option>
+                                    @foreach (var horse in HorseNames)
+                                    {
+                                        <option value="@horse">@horse</option>
+                                    }
+                                </select>
+                            </label>
+                            <label class="popout-option">
+                                <input type="checkbox" @bind="sjClearOnly" />
+                                SJ Clear
+                            </label>
+                            <label class="popout-option">
+                                <input type="checkbox" @bind="xcClearOnly" />
+                                XC Clear
+                            </label>
+                        </div>
+                    }
+                </div>
             </div>
 
             <!-- Search Bar -->
@@ -79,7 +89,8 @@
                        class="search-input"
                        placeholder="Search events..."
                        @bind="searchQuery"
-                       @bind:event="oninput" />
+                       @bind:event="oninput"
+                       disabled="@(allResults is null)" />
             </div>
 
         </div>
@@ -135,7 +146,6 @@
     </div>
 
     <SiteFooter />
-
 </div>
 
 @code {
@@ -216,12 +226,14 @@
 
     private void ToggleSortPanel()
     {
+        if (allResults is null) return;
         showSortPanel = !showSortPanel;
         showFilterPanel = false;
     }
 
     private void ToggleFilterPanel()
     {
+        if (allResults is null) return;
         showFilterPanel = !showFilterPanel;
         showSortPanel = false;
     }
